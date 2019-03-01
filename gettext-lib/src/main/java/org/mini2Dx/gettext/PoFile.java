@@ -1,0 +1,236 @@
+package org.mini2Dx.gettext;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.mini2Dx.gettext.antlr.GetTextBaseListener;
+import org.mini2Dx.gettext.antlr.GetTextLexer;
+import org.mini2Dx.gettext.antlr.GetTextParser;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Locale;
+
+public class PoFile extends GetTextBaseListener {
+	private final Locale locale;
+	private final PoParseSettings parseSettings;
+	private final List<TranslationEntry> entries = new ArrayList<TranslationEntry>();
+
+	private TranslationEntry currentEntry = null;
+
+	public PoFile(Locale locale, File file) throws IOException {
+		this(locale, new FileReader(file));
+	}
+
+	public PoFile(Locale locale, Reader reader) throws IOException {
+		this(locale, reader, PoParseSettings.DEFAULT);
+	}
+
+	public PoFile(Locale locale, InputStream inputStream) throws IOException {
+		this(locale, inputStream, PoParseSettings.DEFAULT);
+	}
+
+	public PoFile(Locale locale, File file, PoParseSettings parseSettings) throws IOException {
+		this(locale, new FileReader(file), parseSettings);
+	}
+
+	public PoFile(Locale locale, Reader reader, PoParseSettings parseSettings) throws IOException {
+		super();
+		this.locale = locale;
+		this.parseSettings = parseSettings;
+
+		read(CharStreams.fromReader(reader));
+		reader.close();
+	}
+
+	public PoFile(Locale locale, InputStream inputStream, PoParseSettings parseSettings) throws IOException {
+		super();
+		this.locale = locale;
+		this.parseSettings = parseSettings;
+
+		read(CharStreams.fromStream(inputStream));
+		inputStream.close();
+	}
+
+	private void read(CharStream charStream) {
+		final GetTextLexer lexer = new GetTextLexer(charStream);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		tokens.fill();
+		for (Token t : tokens.getTokens()) {
+			String symbolicName = GetTextLexer.VOCABULARY.getSymbolicName(t.getType());
+			String literalName = GetTextLexer.VOCABULARY.getLiteralName(t.getType());
+			System.out.printf("  %-20s '%s'\n",
+					symbolicName == null ? literalName : symbolicName,
+					t.getText().replace("\r", "\\r").replace("\n", "\\n").replace("\t", "\\t"));
+		}
+
+		final GetTextParser parser = new GetTextParser(new BufferedTokenStream(lexer));
+
+		final GetTextParser.PoContext context = parser.po();
+		final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+
+		printPrettyLispTree(context.toStringTree());
+		parseTreeWalker.walk(this, context);
+	}
+
+	private static void printPrettyLispTree(String tree) {
+		int indentation = 1;
+		for (char c : tree.toCharArray()) {
+			if (c == '(') {
+				if (indentation > 1) {
+					System.out.println();
+				}
+				for (int i = 0; i < indentation; i++) {
+					System.out.print("  ");
+				}
+				indentation++;
+			}
+			else if (c == ')') {
+				indentation--;
+			}
+			System.out.print(c);
+		}
+		System.out.println();
+	}
+
+	@Override
+	public void enterEntry(GetTextParser.EntryContext ctx) {
+		currentEntry = new TranslationEntry();
+	}
+
+	@Override
+	public void exitEntry(GetTextParser.EntryContext ctx) {
+		entries.add(currentEntry);
+		currentEntry = null;
+	}
+
+	@Override
+	public void exitMessageContext(GetTextParser.MessageContextContext ctx) {
+		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+			final StringBuilder result = new StringBuilder();
+			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
+				if(ctx.QuotedTextLiteral(i) != null) {
+					result.append(ctx.QuotedTextLiteral(i).getText());
+				}
+			}
+			currentEntry.setContext(result.toString());
+		} else if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setContext(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitMessageId(GetTextParser.MessageIdContext ctx) {
+		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+			final StringBuilder result = new StringBuilder();
+			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
+				if(ctx.QuotedTextLiteral(i) != null) {
+					result.append(ctx.QuotedTextLiteral(i).getText());
+				}
+			}
+			currentEntry.setId(result.toString());
+		} else if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setId(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitMessageIdPlural(GetTextParser.MessageIdPluralContext ctx) {
+		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+			final StringBuilder result = new StringBuilder();
+			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
+				if(ctx.QuotedTextLiteral(i) != null) {
+					result.append(ctx.QuotedTextLiteral(i).getText());
+				}
+			}
+			currentEntry.setIdPlural(result.toString());
+		} else if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setIdPlural(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitMessageStr(GetTextParser.MessageStrContext ctx) {
+		final int index;
+
+		if(ctx.numericIndexLiteral() != null) {
+			//Numeric index
+			index = Integer.parseInt(ctx.numericIndexLiteral().digits().getText());
+		} else {
+			index = 0;
+		}
+
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setString(index, ctx.unquotedTextLiteral().getText());
+		} else {
+			final StringBuilder result = new StringBuilder();
+			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
+				if(ctx.QuotedTextLiteral(i) != null) {
+					result.append(ctx.QuotedTextLiteral(i).getText());
+				}
+			}
+			currentEntry.setString(index, result.toString());
+		}
+	}
+
+	@Override
+	public void exitExtractedComment(GetTextParser.ExtractedCommentContext ctx) {
+		if(!parseSettings.extractedComments) {
+			return;
+		}
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.getExtractedComments().add(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitFlag(GetTextParser.FlagContext ctx) {
+		if(!parseSettings.flags) {
+			return;
+		}
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.getFlags().add(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitMergeComment(GetTextParser.MergeCommentContext ctx) {
+		if(!parseSettings.mergeComments) {
+			return;
+		}
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.getMergeComments().add(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitReference(GetTextParser.ReferenceContext ctx) {
+		if(!parseSettings.reference) {
+			return;
+		}
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setReference(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	@Override
+	public void exitTranslatorComment(GetTextParser.TranslatorCommentContext ctx) {
+		if(!parseSettings.translatorComments) {
+			return;
+		}
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.getTranslatorComments().add(ctx.unquotedTextLiteral().getText());
+		}
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public List<TranslationEntry> getEntries() {
+		return entries;
+	}
+}

@@ -1,0 +1,177 @@
+buildscript {
+    repositories {
+    	mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
+    }
+}
+
+if(project.hasProperty('ossrhUser') && project.hasProperty("release")) {
+	apply plugin: "io.codearte.nexus-staging"
+
+	nexusStaging {
+		packageGroup = 'org.mini2Dx'
+		username = ossrhUser
+		password = ossrhPassword
+	}
+}
+
+ext {
+	antlrVersion = '4.7.2'
+	
+	junitVersion="4.8.1"
+	jmockVersion="2.5.1"
+}
+
+subprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    
+    tasks.eclipse.doLast {
+    		delete ".project"
+	}
+	
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+		maven { url 'https://maven.google.com' }
+	}
+}
+
+def docProjects() {
+	subprojects.findAll { !it.name.contains('antlr') }
+}
+
+def projectVersion = '1.0.0-SNAPSHOT';
+
+configure(docProjects()) {
+	apply plugin: "signing"
+	apply plugin: "maven"
+	
+	group = 'org.mini2Dx'
+	version = projectVersion
+	
+	apply plugin: "java"
+		
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+		
+	task sourcesJar(type: Jar) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+		
+	task javadocJar(type: Jar) {
+		classifier = 'javadoc'
+		from javadoc
+	}
+	
+	artifacts {
+		archives javadocJar, sourcesJar
+	}
+	
+	if(project.hasProperty('ossrhUser')) {
+		signing {
+			sign configurations.archives
+		}
+		
+		uploadArchives {
+			repositories {
+				mavenDeployer {
+					// POM signature
+					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+					// Target repository
+					repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+						authentication(userName: ossrhUser, password: ossrhPassword)
+					}
+					pom.project {
+						name project.name
+						description project.description
+						packaging 'jar'
+						url 'https://github.com/mini2Dx/gettext'
+	
+						scm {
+							connection 'scm:git:https://github.com/mini2Dx/gettext.git'
+							developerConnection 'scm:git:git@github.com:mini2Dx/gettext.git'
+							url 'https://github.com/mini2Dx/gettext.git'
+						}
+	
+						licenses {
+							license {
+								name 'Apache License 2.0'
+								url 'https://opensource.org/licenses/Apache-2.0'
+								distribution 'repo'
+							}
+						}
+	
+						developers {
+							developer {
+								id = 'tomcashman'
+								name = 'Thomas Cashman'
+								email = 'thomascashman404@gmail.com'
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+project(":gettext-antlr") {
+	apply plugin: 'antlr'
+
+	description = 'ANTLR4 grammar for GNU gettext'
+	
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+	
+	dependencies {
+		antlr "org.antlr:antlr4:$antlrVersion"
+	}
+	
+	generateGrammarSource {
+		arguments += ["-package", "org.mini2Dx.gettext.antlr"]
+	}
+}
+
+project(":gettext-lib") {
+    description = 'Library for using GNU gettext'
+    
+    task copyAntlrSourcesToProject(type: Copy, dependsOn: project(":gettext-antlr").compileJava) {
+		from "$projectDir/../gettext-antlr/build/generated-src/antlr/main/"
+		into "$projectDir/src/main/java/org/mini2Dx/gettext/antlr/"
+	}
+	
+	dependencies {
+		compile "org.antlr:antlr4-runtime:$antlrVersion"
+		
+		testCompile "junit:junit:$junitVersion"
+		testCompile "org.jmock:jmock-legacy:$jmockVersion"
+		testCompile "org.jmock:jmock-junit4:$jmockVersion"	
+	}
+	
+	compileJava.dependsOn copyAntlrSourcesToProject
+}
+
+project(":gettext-gradle-plugin") {
+	description = 'Gradle plugin for generating .pot files from source files'
+
+	dependencies {
+		compile gradleApi()
+		compile localGroovy()
+		
+		testCompile "junit:junit:$junitVersion"
+		testCompile gradleTestKit()
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10.3'
+}

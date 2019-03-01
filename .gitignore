@@ -1,5 +1,8 @@
 .gradle
-/build/
+build/
+out/
+.idea/
+gettext-lib/src/main/java/org/mini2Dx/gettext/antlr/
 
 # Ignore Gradle GUI config
 gradle-app.setting

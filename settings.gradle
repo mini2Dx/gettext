@@ -1,0 +1,3 @@
+include "gettext-antlr", "gettext-lib", "gettext-gradle-plugin"
+
+rootProject.name = "gettext"

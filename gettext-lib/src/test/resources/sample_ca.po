@@ -1,0 +1,23 @@
+#  translator-comments
+#. extracted-comments
+#: src/msgcmp.java:322
+msgid "Unknown system error"
+msgstr "Error desconegut del sistema"
+
+#: src/msgcmp.java:323
+#, java-format
+msgid "found %d fatal error"
+msgid_plural "found %d fatal errors"
+msgstr[0] "s'ha trobat %d error fatal"
+msgstr[1] "s'han trobat %d errors fatals"
+
+# Translator comments
+#| msgctxt previous-context
+#| msgid previous-untranslated-string
+msgctxt context
+msgid ""
+"Here is an example of how one might continue a very long string\n"
+"for the common case the string represents multi-line output.\n"
+msgstr ""
+"Aquí teniu un exemple de com es pot continuar una cadena molt llarga per al cas comú,\n"
+"la cadena representa una sortida de diverses línies\n"
