@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Parses a .po file and stores a {@link TranslationEntry} for each translation
+ */
 public class PoFile extends GetTextBaseListener {
 	private static final String EMPTY_STRING = "";
 
@@ -19,7 +22,7 @@ public class PoFile extends GetTextBaseListener {
 	private final List<TranslationEntry> entries = new ArrayList<TranslationEntry>();
 
 	private TranslationEntry currentEntry = null;
-
+	
 	public PoFile(Locale locale, File file) throws IOException {
 		this(locale, new FileReader(file));
 	}
