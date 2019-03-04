@@ -86,7 +86,7 @@ public class GetText {
 		if(translationMap == null) {
 			return MessageFormat.format(sourcePluralText, values);
 		}
-		return translationMap.trn(sourceText, sourcePluralText, n);
+		return translationMap.trn(sourceText, sourcePluralText, n, values);
 	}
 
 	public static String trnc(Locale locale, String context, String sourceText, String sourcePluralText, int n) {
@@ -99,15 +99,30 @@ public class GetText {
 
 	public static String trnc(Locale locale, String context, String sourceText, String sourcePluralText, int n, Object... values) {
 		final TranslationMap translationMap = TRANSLATIONS.get(locale);
-		if(translationMap == null) {
+		if (translationMap == null) {
 			return MessageFormat.format(sourcePluralText, values);
 		}
-		return translationMap.trnc(context, sourceText, sourcePluralText, n);
+		return translationMap.trnc(context, sourceText, sourcePluralText, n, values);
+	}
+
+	/**
+	 *
+	 * @param locale
+	 * @param context Null if default context should be used
+	 * @param sourceText
+	 * @return Null if no such entry exists
+	 */
+	public static TranslationEntry getTranslationEntry(Locale locale, String context, String sourceText) {
+		final TranslationMap translationMap = TRANSLATIONS.get(locale);
+		if(translationMap == null) {
+			return null;
+		}
+		return translationMap.getEntry(context, sourceText);
 	}
 
 	public static void add(PoFile poFile) {
 		if(!TRANSLATIONS.containsKey(poFile.getLocale())) {
-			TRANSLATIONS.put(poFile.getLocale(), new TranslationMap());
+			TRANSLATIONS.put(poFile.getLocale(), new TranslationMap(poFile.getLocale()));
 		}
 		TRANSLATIONS.get(poFile.getLocale()).add(poFile);
 	}

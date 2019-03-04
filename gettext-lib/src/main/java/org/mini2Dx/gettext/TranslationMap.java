@@ -2,18 +2,27 @@ package org.mini2Dx.gettext;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class TranslationMap {
+	private final Locale locale;
 	private final TranslationContext defaultContext = new TranslationContext();
 	private final Map<String, TranslationContext> contexts = new HashMap<String, TranslationContext>();
+
+	private final Map<String, MessageFormat> messageFormatsCache = new HashMap<String, MessageFormat>();
+
+	public TranslationMap(Locale locale) {
+		super();
+		this.locale = locale;
+	}
 
 	public String tr(String sourceText) {
 		return defaultContext.tr(sourceText);
 	}
 
 	public String tr(String sourceText, Object... values) {
-		return MessageFormat.format(tr(sourceText), values);
+		return format(sourceText, tr(sourceText), values);
 	}
 
 	public String trc(String context, String sourceText) {
@@ -33,7 +42,13 @@ public class TranslationMap {
 	}
 
 	public String trn(String sourceText, String sourcePluralText, int n, Object... values) {
-		return MessageFormat.format(trn(sourceText, sourcePluralText, n), values);
+		final String id;
+		if(sourcePluralText != null && !sourcePluralText.isEmpty()) {
+			id = sourcePluralText + "-" + n;
+		} else {
+			id = sourceText + "-" + n;
+		}
+		return format(id, trn(sourceText, sourcePluralText, n), values);
 	}
 
 	public String trnc(String context, String sourceText, String sourcePluralText, int n) {
@@ -45,7 +60,13 @@ public class TranslationMap {
 	}
 
 	public String trnc(String context, String sourceText, String sourcePluralText, int n, Object... values) {
-		return MessageFormat.format(trnc(context, sourceText, sourcePluralText, n), values);
+		final String id;
+		if(sourcePluralText != null && !sourcePluralText.isEmpty()) {
+			id = sourcePluralText + "-" + n;
+		} else {
+			id = sourceText + "-" + n;
+		}
+		return format(id, trnc(context, sourceText, sourcePluralText, n), values);
 	}
 
 	public TranslationEntry getEntry(String sourceText) {
@@ -54,7 +75,7 @@ public class TranslationMap {
 
 	public TranslationEntry getEntry(String context, String sourceText) {
 		final TranslationContext translationContext;
-		if(context == null) {
+		if(context == null || context.isEmpty()) {
 			translationContext = defaultContext;
 		} else {
 			if(!contexts.containsKey(context)) {
@@ -65,13 +86,21 @@ public class TranslationMap {
 		return translationContext.getEntryBySingularForm(sourceText);
 	}
 
+	private String format(String id, String str, Object... values) {
+		if(!messageFormatsCache.containsKey(id)) {
+			messageFormatsCache.put(id, new MessageFormat(str.replace("'", "''"), locale));
+		}
+		return messageFormatsCache.get(id).format(values,
+				new StringBuffer(str.length() + (values == null ? 1 : values.length)), null).toString();
+	}
+
 	public void add(PoFile poFile) {
 		if(poFile == null) {
 			throw new NullPointerException("Null poFile reference");
 		}
 		for(TranslationEntry entry : poFile.getEntries()) {
 			final TranslationContext context;
-			if(entry.getContext() != null) {
+			if(entry.getContext() != null && !entry.getContext().isEmpty()) {
 				if(!contexts.containsKey(entry.getContext())) {
 					contexts.put(entry.getContext(), new TranslationContext());
 				}

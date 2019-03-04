@@ -1,20 +1,25 @@
-#  translator-comments
-#. extracted-comments
+#  translator-comments 0
+#. extracted-comments 0
+#, flag 0
+#  translator-comments 1
+#| merge-comment 0
 #: src/msgcmp.java:322
+#, flag 1
+#. extracted-comments 1
+#| merge-comment 1
 msgid "Unknown system error"
 msgstr "Error desconegut del sistema"
 
 #: src/msgcmp.java:323
 #, java-format
-msgid "found %d fatal error"
-msgid_plural "found %d fatal errors"
-msgstr[0] "s'ha trobat %d error fatal"
-msgstr[1] "s'han trobat %d errors fatals"
+msgid "found {0} fatal error"
+msgid_plural "found {0} fatal errors"
+msgstr[0] "s'ha trobat {0} error fatal"
+msgstr[1] "s'han trobat {0} errors fatals"
 
 # Translator comments
 #| msgctxt previous-context
 #| msgid previous-untranslated-string
-msgctxt context
 msgid ""
 "Here is an example of how one might continue a very long string\n"
 "for the common case the string represents multi-line output.\n"

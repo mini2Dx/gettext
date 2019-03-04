@@ -16,11 +16,15 @@
 grammar GetText;
 
 po
-    : entry (emptyLine+ entry)* EOF
+    : entries EOF
+    ;
+
+entries
+    : entry+
     ;
 
 entry
-    : commentsBlock? messagesBlock
+    : emptyLine* commentsBlock? messagesBlock
     ;
 
 commentsBlock
@@ -36,35 +40,45 @@ commentExpression
     ;
 
 messagesBlock
-    : messageExpression+
+    : messageExpression (NEWLINE messagesBlock)+
+    | messageExpression
     ;
 
 messageExpression
-    : messageIdPlural NEWLINE
-    | messageId NEWLINE
-    | messageContext NEWLINE
-    | messageStr (NEWLINE messageStr)* NEWLINE
+    : messageIdPlural
+    | messageId
+    | messageContext
+    | messageNumStr (NEWLINE messageNumStr)*
+    | messageStr
+    ;
+
+messageNumStr
+    : MSGSTR WHITESPACE? numericIndexLiteral WHITESPACE+ quotedTextLiteral (NEWLINE WHITESPACE? quotedTextLiteral)+
+    | MSGSTR WHITESPACE? numericIndexLiteral WHITESPACE+ quotedTextLiteral
+    | MSGSTR WHITESPACE? numericIndexLiteral WHITESPACE+ unquotedTextLiteral
     ;
 
 messageStr
-    : MSGSTR WHITESPACE? numericIndexLiteral WHITESPACE+ QuotedTextLiteral (NEWLINE WHITESPACE? QuotedTextLiteral)*
-    | MSGSTR WHITESPACE? numericIndexLiteral WHITESPACE+ unquotedTextLiteral
-    | MSGSTR WHITESPACE+ QuotedTextLiteral (NEWLINE WHITESPACE? QuotedTextLiteral)*
+    : MSGSTR WHITESPACE+ quotedTextLiteral (NEWLINE WHITESPACE? quotedTextLiteral)+
+    | MSGSTR WHITESPACE+ quotedTextLiteral
     | MSGSTR WHITESPACE unquotedTextLiteral
     ;
 
 messageIdPlural
-    : MSGID_PLURAL WHITESPACE+ QuotedTextLiteral (NEWLINE WHITESPACE* QuotedTextLiteral)*
+    : MSGID_PLURAL WHITESPACE+ quotedTextLiteral (NEWLINE WHITESPACE* quotedTextLiteral)+
+    | MSGID_PLURAL WHITESPACE+ quotedTextLiteral
     | MSGID_PLURAL WHITESPACE unquotedTextLiteral
     ;
 
 messageId
-    : MSGID WHITESPACE+ QuotedTextLiteral (NEWLINE WHITESPACE+ QuotedTextLiteral)*
+    : MSGID WHITESPACE+ quotedTextLiteral (NEWLINE WHITESPACE* quotedTextLiteral)+
+    | MSGID WHITESPACE+ quotedTextLiteral
     | MSGID WHITESPACE unquotedTextLiteral
     ;
 
 messageContext
-    : MSGCTXT WHITESPACE+ QuotedTextLiteral (NEWLINE WHITESPACE+ QuotedTextLiteral)*
+    : MSGCTXT WHITESPACE+ quotedTextLiteral (NEWLINE WHITESPACE* quotedTextLiteral)+
+    | MSGCTXT WHITESPACE+ quotedTextLiteral
     | MSGCTXT WHITESPACE unquotedTextLiteral
     ;
 
@@ -97,15 +111,42 @@ digits
     ;
 
 unquotedTextLiteral
-    : UnquotedTextChar+
+    : unquotedTextChar+
     ;
 
-QuotedTextLiteral
-    : DOUBLEQUOTE QuotedTextChar+ DOUBLEQUOTE
+unquotedTextChar
+    : TEXT
+    | otherChar
+    ;
+
+quotedTextLiteral
+    : DOUBLEQUOTE quotedTextChar* DOUBLEQUOTE
+    ;
+
+quotedTextChar
+    : TEXT
+    | NEWLINE
+    | otherChar
     ;
 
 emptyLine
     : WHITESPACE* NEWLINE
+    ;
+
+otherChar
+    : WHITESPACE
+    | HASH
+    | FULLSTOP
+    | COLON
+    | COMMA
+    | PIPE
+    | LEFTBRACKET
+    | RIGHTBRACKET
+    | DIGIT
+    | MSGCTXT
+    | MSGSTR
+    | MSGID
+    | MSGID_PLURAL
     ;
 
 MSGCTXT : 'msgctxt';
@@ -126,18 +167,4 @@ DIGIT: [0-9];
 WHITESPACE: [ \t];
 NEWLINE : ( '\r'? '\n' | '\r' );
 
-fragment
-QuotedTextChar
-    : ~('"')
-    ;
-
-UnquotedTextChar
-    : ~('\n'|'\r')
-    | WHITESPACE
-    | COLON
-    | DIGIT
-    | COMMA
-    | FULLSTOP
-    | LEFTBRACKET
-    | RIGHTBRACKET
-    ;
+TEXT: ~[\r\n"];

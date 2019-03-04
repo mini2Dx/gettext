@@ -13,11 +13,12 @@ public class TranslationContext {
 	}
 
 	public String trn(String sourceText, String sourcePluralText, int n) {
-		if(!entriesByPluralId.containsKey(sourcePluralText)) {
-			return tr(sourceText);
+		final TranslationEntry entry;
+		if(sourcePluralText == null || !entriesByPluralId.containsKey(sourcePluralText)) {
+			entry = entriesBySingularId.get(sourceText);
+		} else {
+			entry = entriesByPluralId.get(sourcePluralText);
 		}
-
-		final TranslationEntry entry = entriesByPluralId.get(sourcePluralText);
 		if(n >= entry.getStrings().size()) {
 			return entry.getStrings().get(entry.getStrings().size() - 1);
 		}
@@ -37,7 +38,7 @@ public class TranslationContext {
 			entriesBySingularId.put(entry.getId(), entry);
 		}
 		if(entry.getIdPlural() != null) {
-			entriesByPluralId.put(entry.getId(), entry);
+			entriesByPluralId.put(entry.getIdPlural(), entry);
 		}
 	}
 

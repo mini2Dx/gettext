@@ -1,8 +1,6 @@
 package org.mini2Dx.gettext;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.ATNConfigSet;
-import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.mini2Dx.gettext.antlr.GetTextBaseListener;
 import org.mini2Dx.gettext.antlr.GetTextLexer;
@@ -10,11 +8,12 @@ import org.mini2Dx.gettext.antlr.GetTextParser;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
 
 public class PoFile extends GetTextBaseListener {
+	private static final String EMPTY_STRING = "";
+
 	private final Locale locale;
 	private final PoParseSettings parseSettings;
 	private final List<TranslationEntry> entries = new ArrayList<TranslationEntry>();
@@ -57,22 +56,11 @@ public class PoFile extends GetTextBaseListener {
 
 	private void read(CharStream charStream) {
 		final GetTextLexer lexer = new GetTextLexer(charStream);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		tokens.fill();
-		for (Token t : tokens.getTokens()) {
-			String symbolicName = GetTextLexer.VOCABULARY.getSymbolicName(t.getType());
-			String literalName = GetTextLexer.VOCABULARY.getLiteralName(t.getType());
-			System.out.printf("  %-20s '%s'\n",
-					symbolicName == null ? literalName : symbolicName,
-					t.getText().replace("\r", "\\r").replace("\n", "\\n").replace("\t", "\\t"));
-		}
-
 		final GetTextParser parser = new GetTextParser(new BufferedTokenStream(lexer));
 
 		final GetTextParser.PoContext context = parser.po();
 		final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
 
-		printPrettyLispTree(context.toStringTree());
 		parseTreeWalker.walk(this, context);
 	}
 
@@ -109,12 +97,13 @@ public class PoFile extends GetTextBaseListener {
 
 	@Override
 	public void exitMessageContext(GetTextParser.MessageContextContext ctx) {
-		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+		if(ctx.quotedTextLiteral() != null && ctx.quotedTextLiteral().size() > 0) {
 			final StringBuilder result = new StringBuilder();
-			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
-				if(ctx.QuotedTextLiteral(i) != null) {
-					result.append(ctx.QuotedTextLiteral(i).getText());
+			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
+				if(ctx.quotedTextLiteral(i) == null) {
+					continue;
 				}
+				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
 			}
 			currentEntry.setContext(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
@@ -124,12 +113,13 @@ public class PoFile extends GetTextBaseListener {
 
 	@Override
 	public void exitMessageId(GetTextParser.MessageIdContext ctx) {
-		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+		if(ctx.quotedTextLiteral() != null && ctx.quotedTextLiteral().size() > 0) {
 			final StringBuilder result = new StringBuilder();
-			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
-				if(ctx.QuotedTextLiteral(i) != null) {
-					result.append(ctx.QuotedTextLiteral(i).getText());
+			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
+				if(ctx.quotedTextLiteral(i) == null) {
+					continue;
 				}
+				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
 			}
 			currentEntry.setId(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
@@ -139,12 +129,13 @@ public class PoFile extends GetTextBaseListener {
 
 	@Override
 	public void exitMessageIdPlural(GetTextParser.MessageIdPluralContext ctx) {
-		if(ctx.QuotedTextLiteral() != null && ctx.QuotedTextLiteral().size() > 0) {
+		if(ctx.quotedTextLiteral() != null && ctx.quotedTextLiteral().size() > 0) {
 			final StringBuilder result = new StringBuilder();
-			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
-				if(ctx.QuotedTextLiteral(i) != null) {
-					result.append(ctx.QuotedTextLiteral(i).getText());
+			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
+				if(ctx.quotedTextLiteral(i) == null) {
+					continue;
 				}
+				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
 			}
 			currentEntry.setIdPlural(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
@@ -153,7 +144,7 @@ public class PoFile extends GetTextBaseListener {
 	}
 
 	@Override
-	public void exitMessageStr(GetTextParser.MessageStrContext ctx) {
+	public void exitMessageNumStr(GetTextParser.MessageNumStrContext ctx) {
 		final int index;
 
 		if(ctx.numericIndexLiteral() != null) {
@@ -167,12 +158,29 @@ public class PoFile extends GetTextBaseListener {
 			currentEntry.setString(index, ctx.unquotedTextLiteral().getText());
 		} else {
 			final StringBuilder result = new StringBuilder();
-			for(int i = 0; i < ctx.QuotedTextLiteral().size(); i++) {
-				if(ctx.QuotedTextLiteral(i) != null) {
-					result.append(ctx.QuotedTextLiteral(i).getText());
+			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
+				if(ctx.quotedTextLiteral(i) == null) {
+					continue;
 				}
+				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
 			}
 			currentEntry.setString(index, result.toString());
+		}
+	}
+
+	@Override
+	public void exitMessageStr(GetTextParser.MessageStrContext ctx) {
+		if(ctx.unquotedTextLiteral() != null) {
+			currentEntry.setString(0, ctx.unquotedTextLiteral().getText());
+		} else {
+			final StringBuilder result = new StringBuilder();
+			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
+				if(ctx.quotedTextLiteral(i) == null) {
+					continue;
+				}
+				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+			}
+			currentEntry.setString(0, result.toString());
 		}
 	}
 
@@ -224,6 +232,13 @@ public class PoFile extends GetTextBaseListener {
 		if(ctx.unquotedTextLiteral() != null) {
 			currentEntry.getTranslatorComments().add(ctx.unquotedTextLiteral().getText());
 		}
+	}
+
+	private String unquoteText(String str) {
+		if(str.length() == 2) {
+			return EMPTY_STRING;
+		}
+		return str.substring(1, str.length() - 1);
 	}
 
 	public Locale getLocale() {

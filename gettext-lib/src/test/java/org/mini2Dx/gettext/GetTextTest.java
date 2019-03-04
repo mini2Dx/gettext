@@ -17,14 +17,17 @@ public class GetTextTest {
 	public static void setUp() throws IOException  {
 		final PoFile enFile = new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_en.po"));
 		final PoFile caFile = new PoFile(CATALAN, GetTextTest.class.getResourceAsStream("/sample_ca.po"));
+		final PoFile jpFile = new PoFile(Locale.JAPAN, GetTextTest.class.getResourceAsStream("/sample_jp.po"));
+
 		GetText.add(enFile);
 		GetText.add(caFile);
-
-		GetText.setLocale(CATALAN);
+		GetText.add(jpFile);
 	}
 
 	@Test
 	public void testTr() throws IOException {
+		GetText.setLocale(CATALAN);
+
 		for(int i = 0; i < EN.size(); i++) {
 			Assert.assertEquals(CA.get(i), GetText.tr(EN.get(i)));
 		}
@@ -32,31 +35,147 @@ public class GetTextTest {
 
 	@Test
 	public void testTrc() throws IOException {
+		GetText.setLocale(Locale.JAPAN);
 
+		final String context = "system context";
+		final String id = "Unknown system error";
+		final String result = "不明なシステムエラー";
+		Assert.assertEquals(result, GetText.trc(context, id));
 	}
 
 	@Test
 	public void testTrn() throws IOException {
+		GetText.setLocale(CATALAN);
 
+		final String id = "found {0} fatal error";
+		final String idPlural = "found {0} fatal errors";
+
+		Assert.assertEquals("s'ha trobat {0} error fatal", GetText.trn(id, idPlural, 0));
+		Assert.assertEquals("s'han trobat {0} errors fatals", GetText.trn(id, idPlural, 1));
 	}
 
 	@Test
 	public void testTrnc() throws IOException {
+		GetText.setLocale(Locale.JAPAN);
 
+		final String context = "system context";
+		final String id = "found {0} fatal error";
+		final String idPlural = "found {0} fatal errors";
+
+		Assert.assertEquals("{0}致命的なエラーを発見", GetText.trnc(context, id, idPlural, 0));
+		Assert.assertEquals("{0}致命的なエラーを発見", GetText.trnc(context, id, idPlural, 1));
+	}
+
+	@Test
+	public void testTrWithValues() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		Assert.assertEquals("s'ha trobat 7 error fatal", GetText.tr("found {0} fatal error", 7));
+	}
+
+	@Test
+	public void testTrcWithValues() throws IOException {
+		GetText.setLocale(Locale.JAPAN);
+
+		final String context = "system context";
+		final String id = "found {0} fatal error";
+		final String result = "{0}致命的なエラーを発見";
+		Assert.assertEquals(result, GetText.trc(context, id));
+	}
+
+	@Test
+	public void testTrnWithValues() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "found {0} fatal error";
+		final String idPlural = "found {0} fatal errors";
+
+		Assert.assertEquals("s'ha trobat 7 error fatal", GetText.trn(id, idPlural, 0, 7));
+		Assert.assertEquals("s'han trobat 8 errors fatals", GetText.trn(id, idPlural, 1, 8));
+	}
+
+	@Test
+	public void testTrncWithValues() throws IOException {
+		GetText.setLocale(Locale.JAPAN);
+
+		final String context = "system context";
+		final String id = "found {0} fatal error";
+		final String idPlural = "found {0} fatal errors";
+
+		Assert.assertEquals("9致命的なエラーを発見", GetText.trnc(context, id, idPlural, 0, 9));
+		Assert.assertEquals("4致命的なエラーを発見", GetText.trnc(context, id, idPlural, 1, 4));
+	}
+
+	@Test
+	public void testTranslatorComments() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "Unknown system error";
+		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
+
+		for(int i = 0; i < 2; i++) {
+			Assert.assertEquals("translator-comments " + i, entry.getTranslatorComments().get(i).trim());
+		}
+	}
+
+	@Test
+	public void testExtractedComments() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "Unknown system error";
+		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
+
+		for(int i = 0; i < 2; i++) {
+			Assert.assertEquals("extracted-comments " + i, entry.getExtractedComments().get(i).trim());
+		}
+	}
+
+	@Test
+	public void testMergeComments() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "Unknown system error";
+		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
+
+		for(int i = 0; i < 2; i++) {
+			Assert.assertEquals("merge-comment " + i, entry.getMergeComments().get(i).trim());
+		}
+	}
+
+	@Test
+	public void testReference() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "Unknown system error";
+		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
+
+		Assert.assertEquals("src/msgcmp.java:322", entry.getReference().trim());
+	}
+
+	@Test
+	public void testFlag() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id = "Unknown system error";
+		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
+
+		for(int i = 0; i < 2; i++) {
+			Assert.assertEquals("flag " + i, entry.getFlags().get(i).trim());
+		}
 	}
 
 	private static final List<String> EN = new ArrayList<String>() {
 		{
 			add("Unknown system error");
-			add("found %d fatal error");
-			add("Here is an example of how one might continue a very long string\nfor the common case the string represents multi-line output.\n");
+			add("found {0} fatal error");
+			add("Here is an example of how one might continue a very long string\\nfor the common case the string represents multi-line output.\\n");
 		}
 	};
 	private static final List<String> CA = new ArrayList<String>() {
 		{
 			add("Error desconegut del sistema");
-			add("s'ha trobat %d error fatal");
-			add("Aquí teniu un exemple de com es pot continuar una cadena molt llarga per al cas comú,\nla cadena representa una sortida de diverses línies\n");
+			add("s'ha trobat {0} error fatal");
+			add("Aquí teniu un exemple de com es pot continuar una cadena molt llarga per al cas comú,\\nla cadena representa una sortida de diverses línies\\n");
 		}
 	};
 }
