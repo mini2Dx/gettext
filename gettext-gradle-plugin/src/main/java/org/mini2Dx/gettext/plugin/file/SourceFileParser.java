@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext;
+package org.mini2Dx.gettext.plugin.file;
 
-public class PoParseSettings {
-	public static final PoParseSettings DEFAULT = new PoParseSettings();
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
-	/**
-	 * True if extracted comments should be stored
-	 */
-	public boolean extractedComments = true;
+public class SourceFileParser {
 
-	/**
-	 * True if flag comments should be stored
-	 */
-	public boolean flags = true;
-
-	/**
-	 * True if merge comments should be stored
-	 */
-	public boolean mergeComments = true;
-
-	/**
-	 * True if reference comments should be stored
-	 */
-	public boolean reference = true;
-
-	/**
-	 * True if translator comments should be stored
-	 */
-	public boolean translatorComments = true;
+	public static SourceFile parse(File file, String relativePath) throws IOException {
+		final String filename = file.getName().toLowerCase();
+		final String suffix = filename.substring(filename.lastIndexOf('.') + 1);
+		switch(suffix) {
+		case ".lua":
+			return new LuaFile(file, relativePath);
+		case ".java":
+			return new JavaFile(new FileInputStream(file), relativePath);
+		case ".txt":
+			return new TextFile(file, relativePath);
+		default:
+			throw new RuntimeException("Unable to generate .pot file from " + suffix + " file type");
+		}
+	}
 }

@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext;
+package org.mini2Dx.gettext.plugin.file;
 
-public class PoParseSettings {
-	public static final PoParseSettings DEFAULT = new PoParseSettings();
+import org.mini2Dx.gettext.TranslationEntry;
+import org.mini2Dx.gettext.plugin.antlr.LuaBaseListener;
+import org.mini2Dx.gettext.plugin.antlr.LuaParser;
 
-	/**
-	 * True if extracted comments should be stored
-	 */
-	public boolean extractedComments = true;
+import java.io.File;
+import java.util.List;
 
-	/**
-	 * True if flag comments should be stored
-	 */
-	public boolean flags = true;
+public class LuaFile extends LuaBaseListener implements SourceFile {
 
-	/**
-	 * True if merge comments should be stored
-	 */
-	public boolean mergeComments = true;
+	public LuaFile(File file, String relativePath) {
+		super();
+	}
 
-	/**
-	 * True if reference comments should be stored
-	 */
-	public boolean reference = true;
+	@Override
+	public void getTranslationEntries(List<TranslationEntry> result) {
 
-	/**
-	 * True if translator comments should be stored
-	 */
-	public boolean translatorComments = true;
+	}
+
+	@Override
+	public void dispose() {
+
+	}
+
+	@Override
+	public void exitFunctioncall(LuaParser.FunctioncallContext ctx) {
+
+	}
 }

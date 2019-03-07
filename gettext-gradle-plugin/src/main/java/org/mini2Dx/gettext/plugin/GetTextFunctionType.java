@@ -13,33 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext;
+package org.mini2Dx.gettext.plugin;
 
-public class PoParseSettings {
-	public static final PoParseSettings DEFAULT = new PoParseSettings();
-
-	/**
-	 * True if extracted comments should be stored
-	 */
-	public boolean extractedComments = true;
-
-	/**
-	 * True if flag comments should be stored
-	 */
-	public boolean flags = true;
-
-	/**
-	 * True if merge comments should be stored
-	 */
-	public boolean mergeComments = true;
-
-	/**
-	 * True if reference comments should be stored
-	 */
-	public boolean reference = true;
-
-	/**
-	 * True if translator comments should be stored
-	 */
-	public boolean translatorComments = true;
+public enum GetTextFunctionType {
+	TR,
+	TR_WITH_VALUES,
+	TR_WITH_LOCALE,
+	TR_WITH_LOCALE_AND_VALUES,
+	TRC,
+	TRC_WITH_VALUES,
+	TRC_WITH_LOCALE,
+	TRC_WITH_LOCALE_AND_VALUES,
+	TRN,
+	TRN_WITH_VALUES,
+	TRN_WITH_LOCALE,
+	TRN_WITH_LOCALE_AND_VALUES,
+	TRNC,
+	TRNC_WITH_VALUES,
+	TRNC_WITH_LOCALE,
+	TRNC_WITH_LOCALE_AND_VALUES
 }
