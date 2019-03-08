@@ -22,6 +22,7 @@ import org.mini2Dx.gettext.antlr.GetTextLexer;
 import org.mini2Dx.gettext.antlr.GetTextParser;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -86,6 +87,15 @@ public class PoFile extends GetTextBaseListener {
 		final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
 
 		parseTreeWalker.walk(this, context);
+	}
+
+	public void saveTo(File file) throws IOException {
+		final PrintWriter printWriter = new PrintWriter(file, StandardCharsets.UTF_8.name());
+		for(TranslationEntry translationEntry : entries) {
+			translationEntry.writeTo(printWriter);
+		}
+		printWriter.flush();
+		printWriter.close();
 	}
 
 	private static void printPrettyLispTree(String tree) {
@@ -271,9 +281,5 @@ public class PoFile extends GetTextBaseListener {
 
 	public List<TranslationEntry> getEntries() {
 		return entries;
-	}
-
-	public void saveTo(File file) {
-
 	}
 }

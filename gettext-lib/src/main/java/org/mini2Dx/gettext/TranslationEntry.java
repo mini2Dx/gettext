@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.mini2Dx.gettext;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,76 @@ public class TranslationEntry {
 	private String context;
 	private String id, idPlural;
 	private final ArrayList<String> strings = new ArrayList<String>(2);
+
+	public void writeTo(PrintWriter printWriter) {
+		for(String comment : translatorComments) {
+			printWriter.println("# " + comment);
+		}
+		for(String comment : extractedComments) {
+			printWriter.println("#. " + comment);
+		}
+		for(String comment : flags) {
+			printWriter.println("#, " + comment);
+		}
+		for(String comment : mergeComments) {
+			printWriter.println("#| " + comment);
+		}
+		if(reference != null && !reference.isEmpty()) {
+			printWriter.println("#: " + reference);
+		}
+		if(context != null && !context.isEmpty()) {
+			if(context.contains("\"")) {
+				printWriter.println("msgctxt " + context);
+			} else {
+				printWriter.println("msgctxt \"" + context + "\"");
+			}
+		}
+		if(id != null && !id.isEmpty()) {
+			if(id.contains("\"")) {
+				printWriter.println("msgid " + id);
+			} else {
+				printWriter.println("msgid \"" + id + "\"");
+			}
+		}
+		if(idPlural != null && !idPlural.isEmpty()) {
+			if(idPlural.contains("\"")) {
+				printWriter.println("msgid_plural " + idPlural);
+			} else {
+				printWriter.println("msgid_plural \"" + idPlural + "\"");
+			}
+		}
+		if(strings.isEmpty()) {
+			if(idPlural != null && !idPlural.isEmpty()) {
+				printWriter.println("msgstr[0] \"\"");
+				printWriter.println("msgstr[1] \"\"");
+				printWriter.println("msgstr[2] \"\"");
+			} else {
+				printWriter.println("msgstr \"\"");
+			}
+		} else if(strings.size() > 1) {
+			for(int i = 0; i < strings.size(); i++) {
+				final String str = strings.get(i);
+				if(str == null) {
+					printWriter.println("msgstr[" + i + "] \"\"");
+				} else if(str.contains("\"")) {
+					printWriter.println("msgstr[" + i + "] " + str);
+				} else {
+					printWriter.println("msgstr[" + i + "] \"" + str + "\"");
+				}
+			}
+			if(idPlural.contains("\"")) {
+				printWriter.println("msgid_plural " + idPlural);
+			} else {
+				printWriter.println("msgid_plural \"" + idPlural + "\"");
+			}
+		} else {
+			if(strings.get(0).contains("\"")) {
+				printWriter.println("msgstr " + strings.get(0));
+			} else {
+				printWriter.println("msgstr \"" + strings.get(0) + "\"");
+			}
+		}
+	}
 
 	public List<String> getTranslatorComments() {
 		return translatorComments;

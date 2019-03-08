@@ -12,25 +12,28 @@ public class HelloWorld  {
 			"multi " +
 			"line";
 
+	private static final String CONTEXT_3 = "ctx3";
+	private static final String CONTEXT_6 = "ctx6";
+
 	public static void tr() {
 		System.out.println("Non translated string 1");
-		System.out.println(GetText.tr("Hello World!"));
-		final String result = GetText.tr("Multipart " + "same " + "line" ,1);
-		System.out.println(GetText.tr("Multipart " +
+		System.out.println(GetText.trc("ctx0", "Hello World!"));
+		final String result = GetText.trc("ctx1","Multipart " + "same " + "line");
+		System.out.println(GetText.trc("ctx2", "Multipart " +
 				"multi " +
 				"line"));
 
 		//#.Comment 1
-		System.out.println(GetText.tr("With comment"));
+		System.out.println(GetText.trc(CONTEXT_3, "With comment", 77));
 		System.out.println(
-				GetText.tr(STATIC_REF));
+				GetText.trc("ctx4", STATIC_REF));
 		System.out.println("Non translated string 2");
 
 		final String result2 = STATIC_REF_MULTI_PART;
-		System.out.println(GetText.tr(Locale.ENGLISH,
+		System.out.println(GetText.trc("ctx5",
 				result2));
 
 		//#.Comment 2
-		System.out.println(GetText.tr(Locale.ENGLISH, STATIC_REF_MULTI_LINE, 7));
+		System.out.println(GetText.trc(Locale.ENGLISH, CONTEXT_6, STATIC_REF_MULTI_LINE, 52));
 	}
 }

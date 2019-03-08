@@ -25,11 +25,11 @@ public class SourceFileParser {
 		final String filename = file.getName().toLowerCase();
 		final String suffix = filename.substring(filename.lastIndexOf('.') + 1);
 		switch(suffix) {
-		case ".lua":
+		case "lua":
 			return new LuaFile(file, relativePath);
-		case ".java":
+		case "java":
 			return new JavaFile(new FileInputStream(file), relativePath);
-		case ".txt":
+		case "txt":
 			return new TextFile(file, relativePath);
 		default:
 			throw new RuntimeException("Unable to generate .pot file from " + suffix + " file type");

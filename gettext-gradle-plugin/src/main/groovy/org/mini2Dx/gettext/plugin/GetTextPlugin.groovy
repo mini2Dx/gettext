@@ -19,10 +19,11 @@ import org.gradle.api.*
 import org.mini2Dx.gettext.plugin.task.GeneratePotTask
 
 class GetTextPlugin implements Plugin<Project> {
+    final List<String> potTaskNames = new ArrayList<String>();
 
     @Override
     void apply(Project project) {
-        NamedDomainObjectContainer<GetTextSource> sourceContainer = project.container(ServerEnvironment.class, new NamedDomainObjectFactory<GetTextSource>() {
+        NamedDomainObjectContainer<GetTextSource> sourceContainer = project.container(GetTextSource.class, new NamedDomainObjectFactory<GetTextSource>() {
             public GetTextSource create(String name) {
                 return new GetTextSource(name);
             }
@@ -33,9 +34,10 @@ class GetTextPlugin implements Plugin<Project> {
         sourceContainer.all(new Action<GetTextSource>() {
             @Override
             void execute(GetTextSource getTextSource) {
-                final String sourceType = getTextSource.getName()l
+                final String sourceType = getTextSource.getName();
                 final String capitalizedSourceType = sourceType.substring(0, 1).toUpperCase() + sourceType.substring(1);
                 final String taskName = "generatePot" + capitalizedSourceType;
+                potTaskNames.add(taskName);
 
                 project.getTasks().register(taskName, GeneratePotTask.class, new Action<GeneratePotTask>() {
                     public void execute(GeneratePotTask task) {
@@ -44,5 +46,8 @@ class GetTextPlugin implements Plugin<Project> {
                 });
             }
         });
+        project.getTasks().register("generatePots").configure {
+            setDependsOn(potTaskNames)
+        };
     }
 }

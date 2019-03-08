@@ -114,6 +114,13 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 			value = ctx.variableInitializer().getText();
 			if(value.startsWith("\"")) {
 				value = value.substring(1, value.length() - 1);
+			} else if(staticVariables.containsKey(value)) {
+				//Reference
+				value = staticVariables.get(value);
+			} else if(instanceVariables.containsKey(value)) {
+				value = instanceVariables.get(value);
+			} else if(localVariables.containsKey(value)) {
+				value = localVariables.get(value);
 			}
 			value = value.replace("\"+\"", "");
 		} else {
@@ -234,13 +241,14 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	private GetTextFunctionType getFunctionType(TerminalNode identifier, JavaParser.ArgumentListContext argumentListContext) {
 		final String methodName = identifier.getText();
 		final int totalArgs = argumentListContext.expression().size();
-		boolean firstArgIsLocale = false;
+		boolean firstArgIsLocale = true;
 
 		if(argumentListContext.expression().size() > 1) {
 			final JavaParser.AssignmentExpressionContext expressionContext =
 					argumentListContext.expression(0).assignmentExpression();
 			if(expressionContext != null) {
-				final String value = expressionContext.assignment().getText().trim();
+				final String value = expressionContext.assignment() != null ? expressionContext.assignment().getText().trim() :
+						expressionContext.conditionalExpression().getText().trim();
 				if (staticVariables.containsKey(value)) {
 					firstArgIsLocale = false;
 				} else if(localVariables.containsKey(value)) {
@@ -249,6 +257,8 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 					firstArgIsLocale = false;
 				}
 			}
+		} else {
+			firstArgIsLocale = false;
 		}
 
 		switch(methodName) {
