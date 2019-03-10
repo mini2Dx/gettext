@@ -23,6 +23,9 @@ public class SourceFileParser {
 
 	public static SourceFile parse(File file, String relativePath) throws IOException {
 		final String filename = file.getName().toLowerCase();
+		if(!filename.contains(".")) {
+			throw new RuntimeException("Cannot file type for file " + relativePath);
+		}
 		final String suffix = filename.substring(filename.lastIndexOf('.') + 1);
 		switch(suffix) {
 		case "lua":
@@ -30,7 +33,7 @@ public class SourceFileParser {
 		case "java":
 			return new JavaFile(new FileInputStream(file), relativePath);
 		case "txt":
-			return new TextFile(file, relativePath);
+			return new TextFile(new FileInputStream(file), relativePath);
 		default:
 			throw new RuntimeException("Unable to generate .pot file from " + suffix + " file type");
 		}
