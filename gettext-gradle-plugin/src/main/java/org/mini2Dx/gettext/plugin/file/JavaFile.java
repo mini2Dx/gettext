@@ -264,21 +264,21 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		switch(methodName) {
 		case "trnc":
 			if(firstArgIsLocale) {
-				return totalArgs > 2 ? GetTextFunctionType.TRNC_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRNC_WITH_LOCALE;
+				return totalArgs > 4 ? GetTextFunctionType.TRNC_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRNC_WITH_LOCALE;
 			} else {
-				return totalArgs > 1 ? GetTextFunctionType.TRNC_WITH_VALUES : GetTextFunctionType.TRNC;
+				return totalArgs > 3 ? GetTextFunctionType.TRNC_WITH_VALUES : GetTextFunctionType.TRNC;
 			}
 		case "trn":
 			if(firstArgIsLocale) {
-				return totalArgs > 2 ? GetTextFunctionType.TRN_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRN_WITH_LOCALE;
+				return totalArgs > 3 ? GetTextFunctionType.TRN_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRN_WITH_LOCALE;
 			} else {
-				return totalArgs > 1 ? GetTextFunctionType.TRN_WITH_VALUES : GetTextFunctionType.TRN;
+				return totalArgs > 2 ? GetTextFunctionType.TRN_WITH_VALUES : GetTextFunctionType.TRN;
 			}
 		case "trc":
 			if(firstArgIsLocale) {
-				return totalArgs > 2 ? GetTextFunctionType.TRC_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRC_WITH_LOCALE;
+				return totalArgs > 3 ? GetTextFunctionType.TRC_WITH_LOCALE_AND_VALUES : GetTextFunctionType.TRC_WITH_LOCALE;
 			} else {
-				return totalArgs > 1 ? GetTextFunctionType.TRC_WITH_VALUES : GetTextFunctionType.TRC;
+				return totalArgs > 2 ? GetTextFunctionType.TRC_WITH_VALUES : GetTextFunctionType.TRC;
 			}
 		default:
 		case "tr":
@@ -314,6 +314,9 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	@Override
 	public void dispose() {
 		staticVariables.clear();
+		instanceVariables.clear();
+		localVariables.clear();
+		comments.clear();
 		translationEntries.clear();
 	}
 

@@ -26,7 +26,7 @@ public class SourceFileParser {
 		final String suffix = filename.substring(filename.lastIndexOf('.') + 1);
 		switch(suffix) {
 		case "lua":
-			return new LuaFile(file, relativePath);
+			return new LuaFile(new FileInputStream(file), relativePath);
 		case "java":
 			return new JavaFile(new FileInputStream(file), relativePath);
 		case "txt":
