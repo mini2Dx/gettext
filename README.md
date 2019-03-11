@@ -1,3 +1,4 @@
+
 # gettext
 
 [![Build Status](https://travis-ci.org/mini2Dx/gettext.svg?branch=master)](https://travis-ci.org/mini2Dx/gettext)
@@ -9,15 +10,17 @@ GNU gettext Internationalization (i18n) for Java-based video games/applications
 ### Java Library
 
 The Java libary provides classes for reading .po files and accessing translations. 
-See [wiki](https://github.com/mini2Dx/gettext/wiki) for a usage guide.
+See the [wiki](https://github.com/mini2Dx/gettext/wiki) for a usage guide.
+
+Javadoc can be found [here](https://mini2dx.github.io/gettext/javadoc/1.0.0/index.html)
 
 __Gradle__
-```
+```gradle
 compile "org.mini2Dx:gettext-lib:1.0.0"
 ```
 
 __Maven__
-```
+```gradle
 <dependency>
     <groupId>org.mini2Dx</groupId>
     <artifactId>gettext-lib</artifactId>
@@ -28,8 +31,8 @@ __Maven__
 ### Gradle Plugin
 
 The Gradle plugin can parse files and generate a .pot based on the source code. 
-By default it is configured to parse Java files (searching for _GetText._ usage) but
-can be configured to search other file types and regex patterns.
+It can read .java, .lua and .txt files to generate the .pot. 
+See the [wiki](https://github.com/mini2Dx/gettext/wiki) for a usage guide.
 
 ## Purpose
 
