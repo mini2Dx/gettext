@@ -44,13 +44,13 @@ subprojects {
 	}
 }
 
-def docProjects() {
+def mavenProjects() {
 	subprojects.findAll { !it.name.contains('antlr') }
 }
 
 def projectVersion = '1.0.0';
 
-configure(docProjects()) {
+configure(mavenProjects()) {
 	apply plugin: "signing"
 	apply plugin: "maven"
 	apply plugin: "java"
@@ -163,6 +163,14 @@ project(":gettext-lib") {
 		testCompile "junit:junit:$junitVersion"
 		testCompile "org.jmock:jmock-legacy:$jmockVersion"
 		testCompile "org.jmock:jmock-junit4:$jmockVersion"	
+	}
+
+	task docs(type: Javadoc) {
+		failOnError = false
+		title = 'gettext'
+		source project.sourceSets.main.allJava
+		classpath = project.sourceSets.main.compileClasspath
+		destinationDir = rootProject.file("docs/javadoc/${projectVersion}")
 	}
 	
 	compileJava.dependsOn copyAntlrSourcesToProject
