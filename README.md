@@ -20,7 +20,7 @@ compile "org.mini2Dx:gettext-lib:1.0.1"
 ```
 
 __Maven__
-```gradle
+```xml
 <dependency>
     <groupId>org.mini2Dx</groupId>
     <artifactId>gettext-lib</artifactId>
@@ -30,8 +30,7 @@ __Maven__
 
 ### Gradle Plugin
 
-The Gradle plugin can parse files and generate a .pot based on the source code. 
-It can read .java, .lua and .txt files to generate the .pot. 
+The Gradle plugin can parse files and generate a .pot based on the source code.  
 See the [wiki](https://github.com/mini2Dx/gettext/wiki) for a usage guide.
 
 ## Purpose
