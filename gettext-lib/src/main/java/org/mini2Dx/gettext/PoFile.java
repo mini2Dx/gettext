@@ -93,29 +93,10 @@ public class PoFile extends GetTextBaseListener {
 		final PrintWriter printWriter = new PrintWriter(file, StandardCharsets.UTF_8.name());
 		for(TranslationEntry translationEntry : entries) {
 			translationEntry.writeTo(printWriter);
+			printWriter.println();
 		}
 		printWriter.flush();
 		printWriter.close();
-	}
-
-	private static void printPrettyLispTree(String tree) {
-		int indentation = 1;
-		for (char c : tree.toCharArray()) {
-			if (c == '(') {
-				if (indentation > 1) {
-					System.out.println();
-				}
-				for (int i = 0; i < indentation; i++) {
-					System.out.print("  ");
-				}
-				indentation++;
-			}
-			else if (c == ')') {
-				indentation--;
-			}
-			System.out.print(c);
-		}
-		System.out.println();
 	}
 
 	@Override
