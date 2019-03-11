@@ -1,3 +1,5 @@
+[1.0.2-SNAPSHOT]
+
 [1.0.1]
 - Fix missing new line between entries when saving .po files
 

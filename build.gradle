@@ -48,7 +48,7 @@ def mavenProjects() {
 	subprojects.findAll { !it.name.contains('antlr') }
 }
 
-def projectVersion = '1.0.1';
+def projectVersion = '1.0.2-SNAPSHOT';
 
 configure(mavenProjects()) {
 	apply plugin: "signing"
