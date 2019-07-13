@@ -1,4 +1,8 @@
-[1.0.2-SNAPSHOT]
+[1.1.0-SNAPSHOT]
+- Switch to tunnelvisionlabs ANTLR implementation for improved performance
+- Add option to exclude path/s from generation (thanks Ryan Dowling)
+- Add option to set the comment format for extracting comments (thanks Ryan Dowling)
+- Additional unit tests (thanks Ryan Dowling)
 
 [1.0.1]
 - Fix missing new line between entries when saving .po files
