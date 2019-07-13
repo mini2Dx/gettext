@@ -16,19 +16,19 @@
 package org.mini2Dx.gettext.plugin;
 
 public class GetTextSource {
-    private final String name;
-    public String srcDir;
-    public String include;
-    public String exclude;
-    public String[] excludes;
-    public String commentFormat = "#.";
-    public String outputFilename;
+	private final String name;
+	public String srcDir;
+	public String include;
+	public String exclude;
+	public String[] excludes;
+	public String commentFormat = "#.";
+	public String outputFilename;
 
-    public GetTextSource(String name) {
-        this.name = name;
-    }
+	public GetTextSource(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 }

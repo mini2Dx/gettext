@@ -63,9 +63,9 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 				if(comment.startsWith("//")) {
 					comment = comment.substring(2);
 				}
-				if (comment.startsWith(commentFormat)) {
-                    comment = comment.substring(commentFormat.length());
-                } else {
+				if(comment.startsWith(commentFormat)) {
+					comment = comment.substring(commentFormat.length());
+				} else {
 					continue;
 				}
 				comments.put(token.getLine(), comment);
