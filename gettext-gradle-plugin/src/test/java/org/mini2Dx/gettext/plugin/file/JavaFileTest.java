@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaFileTest {
-    private static final String TR_FILENAME = "SampleTr.java";
-    private static final String TRC_FILENAME = "SampleTrc.java";
-    private static final String TRN_FILENAME = "SampleTrn.java";
-    private static final String TRNC_FILENAME = "SampleTrnc.java";
-    private static final String COMMENT_FORMAT = "#.";
+	private static final String TR_FILENAME = "SampleTr.java";
+	private static final String TRC_FILENAME = "SampleTrc.java";
+	private static final String TRN_FILENAME = "SampleTrn.java";
+	private static final String TRNC_FILENAME = "SampleTrnc.java";
+	private static final String COMMENT_FORMAT = "#.";
 
-    private static final String TR_CUSTOM_COMMENT_FILENAME = "SampleTrCustomComment.java";
-    private static final String CUSTOM_COMMENT_FORMAT = " #. ";
+	private static final String TR_CUSTOM_COMMENT_FILENAME = "SampleTrCustomComment.java";
+	private static final String CUSTOM_COMMENT_FORMAT = " #. ";
 
 	private static JavaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE, TR_CUSTOM_COMMENT_FILE;
 
@@ -50,8 +50,8 @@ public class JavaFileTest {
 		TR_FILE.dispose();
 		TRC_FILE.dispose();
 		TRN_FILE.dispose();
-        TRNC_FILE.dispose();
-        TR_CUSTOM_COMMENT_FILE.dispose();
+		TRNC_FILE.dispose();
+		TR_CUSTOM_COMMENT_FILE.dispose();
 	}
 
 	@After
@@ -257,7 +257,7 @@ public class JavaFileTest {
 		Assert.assertEquals("Static ref multi lines", entry6.getIdPlural());
 		Assert.assertEquals(1, entry6.getExtractedComments().size());
 		Assert.assertEquals("Comment 2", entry6.getExtractedComments().get(0));
-    }
+	}
 
 	@Test
 	public void testTrCustomComment() {

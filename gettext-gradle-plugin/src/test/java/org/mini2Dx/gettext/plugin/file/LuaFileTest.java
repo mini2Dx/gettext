@@ -27,9 +27,12 @@ public class LuaFileTest {
 	private static final String TRC_FILENAME = "sampleTrc.lua";
 	private static final String TRN_FILENAME = "sampleTrn.lua";
 	private static final String TRNC_FILENAME = "sampleTrnc.lua";
-    private static final String COMMENT_FORMAT = "#.";
+	private static final String COMMENT_FORMAT = "#.";
 
-	private static LuaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE;
+	private static final String TR_CUSTOM_COMMENT_FILENAME = "sampleTrCustomComment.lua";
+	private static final String CUSTOM_COMMENT_FORMAT = " #. ";
+
+	private static LuaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE, TR_CUSTOM_COMMENT_FILE;
 
 	private final List<TranslationEntry> results = new ArrayList<TranslationEntry>();
 
@@ -39,6 +42,7 @@ public class LuaFileTest {
 		TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT);
 		TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT);
 		TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT);
+		TR_CUSTOM_COMMENT_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME, CUSTOM_COMMENT_FORMAT);
 	}
 
 	@AfterClass
@@ -47,6 +51,7 @@ public class LuaFileTest {
 		TRC_FILE.dispose();
 		TRN_FILE.dispose();
 		TRNC_FILE.dispose();
+		TR_CUSTOM_COMMENT_FILE.dispose();
 	}
 
 	@After
@@ -178,6 +183,34 @@ public class LuaFileTest {
 		Assert.assertEquals("ctx3", entry3.getContext());
 		Assert.assertEquals("Tr with args and comment", entry3.getId());
 		Assert.assertEquals("Tr with args and comment plural", entry3.getIdPlural());
+		Assert.assertEquals(1, entry3.getExtractedComments().size());
+		Assert.assertEquals("Comment 1", entry3.getExtractedComments().get(0));
+	}
+
+	@Test
+	public void testTrCustomComment() {
+		TR_CUSTOM_COMMENT_FILE.getTranslationEntries(results);
+
+		Assert.assertEquals(4, results.size());
+
+		final TranslationEntry entry0 = results.get(0);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":1", entry0.getReference());
+		Assert.assertEquals("Simple", entry0.getId());
+		Assert.assertEquals(0, entry0.getExtractedComments().size());
+
+		final TranslationEntry entry1 = results.get(1);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":3", entry1.getReference());
+		Assert.assertEquals("Multi part", entry1.getId());
+		Assert.assertEquals(0, entry1.getExtractedComments().size());
+
+		final TranslationEntry entry2 = results.get(2);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":6", entry2.getReference());
+		Assert.assertEquals("Variable Ref", entry2.getId());
+		Assert.assertEquals(0, entry2.getExtractedComments().size());
+
+		final TranslationEntry entry3 = results.get(3);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":9", entry3.getReference());
+		Assert.assertEquals("Tr with args and comment", entry3.getId());
 		Assert.assertEquals(1, entry3.getExtractedComments().size());
 		Assert.assertEquals("Comment 1", entry3.getExtractedComments().get(0));
 	}
