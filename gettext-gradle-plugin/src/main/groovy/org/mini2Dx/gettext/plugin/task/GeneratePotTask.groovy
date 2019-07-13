@@ -61,7 +61,7 @@ class GeneratePotTask extends DefaultTask {
     }
 
     private void generateTranslationEntries(File file, String relativePath, List<TranslationEntry> results) {
-        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath);
+        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, source.commentFormat);
         sourceFile.getTranslationEntries(results);
         sourceFile.dispose();
     }

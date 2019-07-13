@@ -28,7 +28,7 @@ public class TextFile implements SourceFile {
 	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 	private final String relativePath;
 
-	public TextFile(InputStream inputStream, String relativePath) throws IOException {
+	public TextFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -42,8 +42,8 @@ public class TextFile implements SourceFile {
 				entry = new TranslationEntry();
 			}
 			if(!line.trim().isEmpty()) {
-				if(line.startsWith("#.")) {
-					entry.getExtractedComments().add(line.substring(2).trim());
+				if(line.startsWith(commentFormat)) {
+					entry.getExtractedComments().add(line.substring(commentFormat.length()).trim());
 				} else {
 					entry.setReference(relativePath + ":" + lineNumber);
 					entry.setId(line);

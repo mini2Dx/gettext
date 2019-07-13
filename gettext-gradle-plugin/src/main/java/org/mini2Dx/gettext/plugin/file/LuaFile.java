@@ -41,7 +41,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	private final Map<String, String> variables = new HashMap<String, String>();
 	private final Map<Integer, String> comments = new HashMap<Integer, String>();
 
-	public LuaFile(InputStream inputStream, String relativePath) throws IOException {
+	public LuaFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -54,8 +54,8 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 				if(comment.startsWith("--")) {
 					comment = comment.substring(2);
 				}
-				if(comment.startsWith("#.")) {
-					comment = comment.substring(2);
+				if(comment.startsWith(commentFormat)) {
+					comment = comment.substring(commentFormat.length());
 				} else {
 					continue;
 				}

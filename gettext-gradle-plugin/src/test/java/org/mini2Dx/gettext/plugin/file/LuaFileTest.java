@@ -27,6 +27,7 @@ public class LuaFileTest {
 	private static final String TRC_FILENAME = "sampleTrc.lua";
 	private static final String TRN_FILENAME = "sampleTrn.lua";
 	private static final String TRNC_FILENAME = "sampleTrnc.lua";
+    private static final String COMMENT_FORMAT = "#.";
 
 	private static LuaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE;
 
@@ -34,10 +35,10 @@ public class LuaFileTest {
 
 	@BeforeClass
 	public static void loadFiles() throws IOException {
-		TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME);
-		TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME);
-		TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME);
-		TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME);
+		TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME, COMMENT_FORMAT);
+		TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT);
+		TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT);
+		TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT);
 	}
 
 	@AfterClass
