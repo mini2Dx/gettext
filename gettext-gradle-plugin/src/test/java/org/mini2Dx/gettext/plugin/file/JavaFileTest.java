@@ -27,17 +27,22 @@ public class JavaFileTest {
 	private static final String TRC_FILENAME = "SampleTrc.java";
 	private static final String TRN_FILENAME = "SampleTrn.java";
 	private static final String TRNC_FILENAME = "SampleTrnc.java";
+	private static final String COMMENT_FORMAT = "#.";
 
-	private static JavaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE;
+	private static final String TR_CUSTOM_COMMENT_FILENAME = "SampleTrCustomComment.java";
+	private static final String CUSTOM_COMMENT_FORMAT = " #. ";
+
+	private static JavaFile TR_FILE, TRC_FILE, TRN_FILE, TRNC_FILE, TR_CUSTOM_COMMENT_FILE;
 
 	private final List<TranslationEntry> results = new ArrayList<TranslationEntry>();
 
 	@BeforeClass
 	public static void loadFiles() throws IOException {
-		TR_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME);
-		TRC_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME);
-		TRN_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME);
-		TRNC_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME);
+		TR_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME, COMMENT_FORMAT);
+		TRC_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT);
+		TRN_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT);
+		TRNC_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT);
+		TR_CUSTOM_COMMENT_FILE = new JavaFile(JavaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME, CUSTOM_COMMENT_FORMAT);
 	}
 
 	@AfterClass
@@ -46,6 +51,7 @@ public class JavaFileTest {
 		TRC_FILE.dispose();
 		TRN_FILE.dispose();
 		TRNC_FILE.dispose();
+		TR_CUSTOM_COMMENT_FILE.dispose();
 	}
 
 	@After
@@ -249,6 +255,49 @@ public class JavaFileTest {
 		Assert.assertEquals("ctx6", entry6.getContext());
 		Assert.assertEquals("Static ref multi line", entry6.getId());
 		Assert.assertEquals("Static ref multi lines", entry6.getIdPlural());
+		Assert.assertEquals(1, entry6.getExtractedComments().size());
+		Assert.assertEquals("Comment 2", entry6.getExtractedComments().get(0));
+	}
+
+	@Test
+	public void testTrCustomComment() {
+		TR_CUSTOM_COMMENT_FILE.getTranslationEntries(results);
+		Assert.assertEquals(7, results.size());
+
+		final TranslationEntry entry0 = results.get(0);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":17", entry0.getReference());
+		Assert.assertEquals("Hello World!", entry0.getId());
+		Assert.assertEquals(0, entry0.getExtractedComments().size());
+
+		final TranslationEntry entry1 = results.get(1);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":18", entry1.getReference());
+		Assert.assertEquals("Multipart same line", entry1.getId());
+		Assert.assertEquals(0, entry1.getExtractedComments().size());
+
+		final TranslationEntry entry2 = results.get(2);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":19", entry2.getReference());
+		Assert.assertEquals("Multipart multi line", entry2.getId());
+		Assert.assertEquals(0, entry2.getExtractedComments().size());
+
+		final TranslationEntry entry3 = results.get(3);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":24", entry3.getReference());
+		Assert.assertEquals("With comment", entry3.getId());
+		Assert.assertEquals(1, entry3.getExtractedComments().size());
+		Assert.assertEquals("Comment 1", entry3.getExtractedComments().get(0));
+
+		final TranslationEntry entry4 = results.get(4);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":26", entry4.getReference());
+		Assert.assertEquals("Static ref", entry4.getId());
+		Assert.assertEquals(0, entry4.getExtractedComments().size());
+
+		final TranslationEntry entry5 = results.get(5);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":30", entry5.getReference());
+		Assert.assertEquals("Static ref multi part", entry5.getId());
+		Assert.assertEquals(0, entry5.getExtractedComments().size());
+
+		final TranslationEntry entry6 = results.get(6);
+		Assert.assertEquals(TR_CUSTOM_COMMENT_FILENAME + ":34", entry6.getReference());
+		Assert.assertEquals("Static ref multi line", entry6.getId());
 		Assert.assertEquals(1, entry6.getExtractedComments().size());
 		Assert.assertEquals("Comment 2", entry6.getExtractedComments().get(0));
 	}

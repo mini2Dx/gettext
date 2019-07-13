@@ -31,6 +31,16 @@ class GeneratePotTask extends DefaultTask {
     public void run() throws IOException {
         final FileTree sourceFiles = project.fileTree(source.srcDir) {
             include source.include;
+
+            if(source.excludes != null) {
+                for (String excludePath : source.excludes) {
+                    exclude excludePath;
+                }
+            }
+
+            if(source.exclude != null) {
+                exclude source.exclude;
+            }
         };
 
         final PoFile poFile = new PoFile(Locale.ENGLISH);
@@ -51,7 +61,7 @@ class GeneratePotTask extends DefaultTask {
     }
 
     private void generateTranslationEntries(File file, String relativePath, List<TranslationEntry> results) {
-        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath);
+        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, source.commentFormat);
         sourceFile.getTranslationEntries(results);
         sourceFile.dispose();
     }

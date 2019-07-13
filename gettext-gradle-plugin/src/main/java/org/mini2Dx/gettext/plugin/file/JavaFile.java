@@ -49,7 +49,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	private ParseState parseState = ParseState.CLASS;
 	private boolean nextFieldIsStatic = true;
 
-	public JavaFile(InputStream inputStream, String relativePath) throws IOException {
+	public JavaFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -63,8 +63,8 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 				if(comment.startsWith("//")) {
 					comment = comment.substring(2);
 				}
-				if(comment.startsWith("#.")) {
-					comment = comment.substring(2);
+				if(comment.startsWith(commentFormat)) {
+					comment = comment.substring(commentFormat.length());
 				} else {
 					continue;
 				}

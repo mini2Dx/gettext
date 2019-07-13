@@ -10,10 +10,11 @@ import java.util.List;
 
 public class TextFileTest {
 	private static final String FILENAME = "sample.txt";
+	private static final String COMMENT_FORMAT = "#.";
 
 	@Test
 	public void testTextFile() throws IOException {
-		final TextFile textFile = new TextFile(TextFileTest.class.getResourceAsStream("/" + FILENAME), FILENAME);
+		final TextFile textFile = new TextFile(TextFileTest.class.getResourceAsStream("/" + FILENAME), FILENAME, COMMENT_FORMAT);
 		final List<TranslationEntry> results = new ArrayList<TranslationEntry>();
 		textFile.getTranslationEntries(results);
 
