@@ -1,4 +1,4 @@
-[1.1.0-SNAPSHOT]
+[1.1.0]
 - Switch to tunnelvisionlabs ANTLR implementation for improved performance
 - Add option to exclude path/s from generation (thanks Ryan Dowling)
 - Add option to set the comment format for extracting comments (thanks Ryan Dowling)
