@@ -27,6 +27,7 @@ import org.mini2Dx.gettext.plugin.antlr.LuaLexer;
 import org.mini2Dx.gettext.plugin.antlr.LuaParser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,13 +36,45 @@ import java.util.List;
 import java.util.Map;
 
 public class LuaFile extends LuaBaseListener implements SourceFile {
+	public static final String DEFAULT_COMMENT_FORMAT = "#.";
+
 	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 	private final String relativePath;
 
 	private final Map<String, String> variables = new HashMap<String, String>();
 	private final Map<Integer, String> comments = new HashMap<Integer, String>();
 
-	public LuaFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
+	/**
+	 * Parses a lua file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. --#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param file The input {@link File} to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public LuaFile(File file, String relativePath) throws IOException {
+		this(new FileInputStream(file), relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a lua file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. --#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public LuaFile(InputStream inputStream, String relativePath) throws IOException {
+		this(inputStream, relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a lua file from an input stream using a custom PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. --#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @param commentFormatPrefix The custom comment prefix to parse
+	 * @throws IOException
+	 */
+	public LuaFile(InputStream inputStream, String relativePath, String commentFormatPrefix) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -54,8 +87,8 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 				if(comment.startsWith("--")) {
 					comment = comment.substring(2);
 				}
-				if(comment.startsWith(commentFormat)) {
-					comment = comment.substring(commentFormat.length());
+				if(comment.startsWith(commentFormatPrefix)) {
+					comment = comment.substring(commentFormatPrefix.length());
 				} else {
 					continue;
 				}
@@ -112,6 +145,9 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	}
 
 	private void generateTranslationEntry(int lineNumber, LuaParser.NameAndArgsContext ctx) {
+		if(ctx == null || ctx.NAME() == null) {
+			throw new RuntimeException("Error parsing lua file at line: "+ lineNumber);
+		}
 		final String functionName = ctx.NAME().getText();
 		if(!isGetTextFunction(functionName)) {
 			return;
@@ -232,5 +268,9 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 			return true;
 		}
 		return false;
+	}
+
+	public String getRelativePath() {
+		return relativePath;
 	}
 }

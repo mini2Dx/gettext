@@ -1,4 +1,6 @@
 [1.1.1-SNAPSHOT]
+- Update to tunnelvisionlabs ANTLR 4.7.3
+- Throw exception if Lua parsing fails
 
 [1.1.0]
 - Switch to tunnelvisionlabs ANTLR implementation for improved performance

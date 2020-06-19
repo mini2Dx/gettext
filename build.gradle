@@ -21,7 +21,7 @@ if(project.hasProperty('ossrhUser') && project.hasProperty("release")) {
 }
 
 ext {
-	antlrVersion = '4.7.2'
+	antlrVersion = '4.7.3'
 	
 	junitVersion="4.8.1"
 	jmockVersion="2.5.1"

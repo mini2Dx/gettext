@@ -30,6 +30,8 @@ import org.mini2Dx.gettext.plugin.antlr.JavaBaseListener;
 import org.mini2Dx.gettext.plugin.antlr.JavaLexer;
 import org.mini2Dx.gettext.plugin.antlr.JavaParser;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JavaFile extends JavaBaseListener implements SourceFile {
+	public static final String DEFAULT_COMMENT_FORMAT = "#.";
+
 	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 	private final String relativePath;
 
@@ -49,7 +53,37 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	private ParseState parseState = ParseState.CLASS;
 	private boolean nextFieldIsStatic = true;
 
-	public JavaFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
+	/**
+	 * Parses a java file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. //#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param file The input {@link File} to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public JavaFile(File file, String relativePath) throws IOException {
+		this(new FileInputStream(file), relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a java file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. //#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public JavaFile(InputStream inputStream, String relativePath) throws IOException {
+		this(inputStream, relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a java file from an input stream using a custom PO comment prefix.
+	 * Any comment line starting with the comment prefix (e.g. //#. This is a note) will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @param commentFormatPrefix The custom comment prefix to parse
+	 * @throws IOException
+	 */
+	public JavaFile(InputStream inputStream, String relativePath, String commentFormatPrefix) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -63,8 +97,8 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 				if(comment.startsWith("//")) {
 					comment = comment.substring(2);
 				}
-				if(comment.startsWith(commentFormat)) {
-					comment = comment.substring(commentFormat.length());
+				if(comment.startsWith(commentFormatPrefix)) {
+					comment = comment.substring(commentFormatPrefix.length());
 				} else {
 					continue;
 				}
@@ -318,6 +352,10 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		localVariables.clear();
 		comments.clear();
 		translationEntries.clear();
+	}
+
+	public String getRelativePath() {
+		return relativePath;
 	}
 
 	private enum ParseState {

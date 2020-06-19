@@ -18,6 +18,7 @@ package org.mini2Dx.gettext.plugin.file;
 import org.mini2Dx.gettext.TranslationEntry;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,10 +26,42 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TextFile implements SourceFile {
+	public static final String DEFAULT_COMMENT_FORMAT = "#.";
+
 	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 	private final String relativePath;
 
-	public TextFile(InputStream inputStream, String relativePath, String commentFormat) throws IOException {
+	/**
+	 * Parses a text file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any line starting with the comment prefix will be treated as a translation note for the generate PO file.
+	 * @param file The input {@link File} to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public TextFile(File file, String relativePath) throws IOException {
+		this(new FileInputStream(file), relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a text file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
+	 * Any line starting with the comment prefix will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @throws IOException
+	 */
+	public TextFile(InputStream inputStream, String relativePath) throws IOException {
+		this(inputStream, relativePath, DEFAULT_COMMENT_FORMAT);
+	}
+
+	/**
+	 * Parses a text file from an input stream using a custom PO comment prefix.
+	 * Any line starting with the comment prefix will be treated as a translation note for the generate PO file.
+	 * @param inputStream The input stream to read from
+	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
+	 * @param commentFormatPrefix The custom comment prefix to parse
+	 * @throws IOException
+	 */
+	public TextFile(InputStream inputStream, String relativePath, String commentFormatPrefix) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -42,10 +75,10 @@ public class TextFile implements SourceFile {
 				entry = new TranslationEntry();
 			}
 			if(!line.trim().isEmpty()) {
-				if(line.startsWith(commentFormat)) {
-					entry.getExtractedComments().add(line.substring(commentFormat.length()).trim());
+				if(line.startsWith(commentFormatPrefix)) {
+					entry.getExtractedComments().add(line.substring(commentFormatPrefix.length()).trim());
 				} else {
-					entry.setReference(relativePath + ":" + lineNumber);
+					entry.setReference(this.relativePath + ":" + lineNumber);
 					entry.setId(line);
 					translationEntries.add(entry);
 					entry = null;
@@ -65,5 +98,9 @@ public class TextFile implements SourceFile {
 	@Override
 	public void dispose() {
 		translationEntries.clear();
+	}
+
+	public String getRelativePath() {
+		return relativePath;
 	}
 }
