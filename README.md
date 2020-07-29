@@ -1,7 +1,7 @@
 
 # gettext
 
-[![Build Status](https://travis-ci.org/mini2Dx/gettext.svg?branch=master)](https://travis-ci.org/mini2Dx/gettext)
+![Continuous Integration](https://github.com/mini2Dx/gettext/workflows/Continuous%20Integration/badge.svg)
 
 GNU gettext Internationalization (i18n) for Java-based video games/applications
 
