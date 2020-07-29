@@ -16,7 +16,7 @@
 grammar GetText;
 
 po
-    : entries EOF
+    : entries NEWLINE* EOF
     ;
 
 entries

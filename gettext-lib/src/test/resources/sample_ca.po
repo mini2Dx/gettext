@@ -26,3 +26,4 @@ msgid ""
 msgstr ""
 "Aquí teniu un exemple de com es pot continuar una cadena molt llarga per al cas comú,\n"
 "la cadena representa una sortida de diverses línies\n"
+

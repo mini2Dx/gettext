@@ -10,3 +10,4 @@ msgid "found {0} fatal error"
 msgid_plural "found {0} fatal errors"
 msgstr[0] "{0}致命的なエラーを発見"
 msgstr[1] "{0}致命的なエラーを発見"
+
