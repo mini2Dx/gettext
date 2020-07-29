@@ -52,7 +52,7 @@ class GeneratePotTask extends DefaultTask {
             entries.clear();
         }
 
-        final File outputDirectory = new File(project.getBuildDir(), 'gettext');
+        final File outputDirectory = source.outputPath == null ? new File(project.getBuildDir(), 'gettext') : new File(project.getProjectDir(), source.outputPath);
         if(!outputDirectory.exists()) {
             outputDirectory.mkdirs();
         }

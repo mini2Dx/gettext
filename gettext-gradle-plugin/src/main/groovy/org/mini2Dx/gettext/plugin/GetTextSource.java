@@ -22,6 +22,7 @@ public class GetTextSource {
 	public String exclude;
 	public String[] excludes;
 	public String commentFormat = "#.";
+	public String outputPath;
 	public String outputFilename;
 
 	public GetTextSource(String name) {
