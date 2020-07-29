@@ -1,4 +1,6 @@
-[1.1.2-SNAPSHOT]
+[1.2.0]
+- Allow new lines/whitespace at end of .po files
+- Add outputPath configuration option to gradle plugin
 
 [1.1.1]
 - Update to tunnelvisionlabs ANTLR 4.7.3
