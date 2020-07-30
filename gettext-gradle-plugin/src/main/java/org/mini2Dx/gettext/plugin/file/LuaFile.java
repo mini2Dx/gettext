@@ -18,6 +18,7 @@ package org.mini2Dx.gettext.plugin.file;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.TranslationEntry;
@@ -38,8 +39,8 @@ import java.util.Map;
 public class LuaFile extends LuaBaseListener implements SourceFile {
 	public static final String DEFAULT_COMMENT_FORMAT = "#.";
 
-	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
-	private final String relativePath;
+	protected final String relativePath;
+	protected final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 
 	private final Map<String, String> variables = new HashMap<String, String>();
 	private final Map<Integer, String> comments = new HashMap<Integer, String>();
@@ -144,13 +145,19 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 		}
 	}
 
-	private void generateTranslationEntry(int lineNumber, LuaParser.NameAndArgsContext ctx) {
+	/**
+	 * Used when extending LuaFile
+	 * @param lineNumber
+	 * @param ctx
+	 * @return if a {@link TranslationEntry} has been generated
+	 */
+	protected boolean generateTranslationEntry(int lineNumber, LuaParser.NameAndArgsContext ctx) {
 		if(ctx == null || ctx.NAME() == null) {
 			throw new RuntimeException("Error parsing lua file at line: "+ lineNumber);
 		}
 		final String functionName = ctx.NAME().getText();
 		if(!isGetTextFunction(functionName)) {
-			return;
+			return false;
 		}
 
 		final TranslationEntry translationEntry = new TranslationEntry();
@@ -205,6 +212,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 		}
 
 		translationEntries.add(translationEntry);
+		return true;
 	}
 
 	private GetTextFunctionType getFunctionType(String functionName, LuaParser.ArgsContext argsContext) {
@@ -222,7 +230,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 		}
 	}
 
-	private String getArgument(LuaParser.ArgsContext argsContext, int index) {
+	protected String getArgument(LuaParser.ArgsContext argsContext, int index) {
 		if(index < 0) {
 			return "";
 		} else if(index >= argsContext.explist().exp().size()) {
@@ -268,6 +276,13 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 			return true;
 		}
 		return false;
+	}
+
+	protected String getComment(int line) {
+		if (comments.containsKey(line)){
+			return comments.get(line);
+		}
+		return null;
 	}
 
 	public String getRelativePath() {
