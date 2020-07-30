@@ -42,8 +42,8 @@ import java.util.Map;
 public class JavaFile extends JavaBaseListener implements SourceFile {
 	public static final String DEFAULT_COMMENT_FORMAT = "#.";
 
-	private final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
-	private final String relativePath;
+	protected final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
+	protected final String relativePath;
 
 	private final Map<String, String> staticVariables = new HashMap<String, String>();
 	private final Map<String, String> instanceVariables = new HashMap<String, String>();
@@ -185,12 +185,19 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		generateTranslationEntry(ctx.getStart().getLine(), ctx.Identifier(), ctx.argumentList());
 	}
 
-	private void generateTranslationEntry(int lineNumber, TerminalNode identifier, JavaParser.ArgumentListContext argListCtxt) {
+	/**
+	 * Used when extending JavaFile
+	 * @param lineNumber
+	 * @param identifier
+	 * @param argListCtxt
+	 * @return if a {@link TranslationEntry} has been generated
+	 */
+	protected boolean generateTranslationEntry(int lineNumber, TerminalNode identifier, JavaParser.ArgumentListContext argListCtxt) {
 		if(identifier == null) {
-			return;
+			return false;
 		}
 		if(!isGetTextMethod(identifier.getText())) {
-			return;
+			return false;
 		}
 		final TranslationEntry translationEntry = new TranslationEntry();
 		translationEntry.setReference(relativePath + ":" + lineNumber);
@@ -244,9 +251,10 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		}
 
 		translationEntries.add(translationEntry);
+		return true;
 	}
 
-	private String getArgument(JavaParser.ArgumentListContext argumentListContext, int index) {
+	protected String getArgument(JavaParser.ArgumentListContext argumentListContext, int index) {
 		if(index < 0) {
 			return "";
 		} else if(index >= argumentListContext.expression().size()) {
@@ -352,6 +360,13 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		localVariables.clear();
 		comments.clear();
 		translationEntries.clear();
+	}
+
+	protected String getComment(int line) {
+		if (comments.containsKey(line)){
+			return comments.get(line);
+		}
+		return null;
 	}
 
 	public String getRelativePath() {
