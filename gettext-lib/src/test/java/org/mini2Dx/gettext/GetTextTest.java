@@ -27,15 +27,23 @@ import java.util.Locale;
 public class GetTextTest {
 	private static final Locale CATALAN = Locale.forLanguageTag("ca-ES");
 
+	private static PoFile EN_FILE, CA_FILE, JP_FILE;
+
 	@BeforeClass
 	public static void setUp() throws IOException  {
-		final PoFile enFile = new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_en.po"));
-		final PoFile caFile = new PoFile(CATALAN, GetTextTest.class.getResourceAsStream("/sample_ca.po"));
-		final PoFile jpFile = new PoFile(Locale.JAPAN, GetTextTest.class.getResourceAsStream("/sample_jp.po"));
+		EN_FILE = new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_en.po"));
+		CA_FILE = new PoFile(CATALAN, GetTextTest.class.getResourceAsStream("/sample_ca.po"));
+		JP_FILE = new PoFile(Locale.JAPAN, GetTextTest.class.getResourceAsStream("/sample_jp.po"));
 
-		GetText.add(enFile);
-		GetText.add(caFile);
-		GetText.add(jpFile);
+		GetText.add(EN_FILE);
+		GetText.add(CA_FILE);
+		GetText.add(JP_FILE);
+	}
+
+	@Test
+	public void testEntries() {
+		Assert.assertEquals(4, CA_FILE.getEntries().size());
+		Assert.assertEquals("Unknown \"system\" error", CA_FILE.getEntries().get(0).getId());
 	}
 
 	@Test
@@ -48,11 +56,24 @@ public class GetTextTest {
 	}
 
 	@Test
+	public void testTrWithNestedQuotes() throws IOException {
+		GetText.setLocale(CATALAN);
+
+		final String id1 = "Unknown \"system\" error";
+		final String result1 = "Error desconegut del \"sistema\"";
+		Assert.assertEquals(result1, GetText.tr(id1));
+
+		final String id2 = "Unknown \"systems\" error";
+		final String result2 = "Error desconegut del \"sistemas\"";
+		Assert.assertEquals(result2, GetText.tr(id2));
+	}
+
+	@Test
 	public void testTrc() throws IOException {
 		GetText.setLocale(Locale.JAPAN);
 
 		final String context = "system context";
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final String result = "不明なシステムエラー";
 		Assert.assertEquals(result, GetText.trc(context, id));
 	}
@@ -124,7 +145,7 @@ public class GetTextTest {
 	public void testTranslatorComments() throws IOException {
 		GetText.setLocale(CATALAN);
 
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
 
 		for(int i = 0; i < 2; i++) {
@@ -136,7 +157,7 @@ public class GetTextTest {
 	public void testExtractedComments() throws IOException {
 		GetText.setLocale(CATALAN);
 
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
 
 		for(int i = 0; i < 2; i++) {
@@ -148,7 +169,7 @@ public class GetTextTest {
 	public void testMergeComments() throws IOException {
 		GetText.setLocale(CATALAN);
 
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
 
 		for(int i = 0; i < 2; i++) {
@@ -160,7 +181,7 @@ public class GetTextTest {
 	public void testReference() throws IOException {
 		GetText.setLocale(CATALAN);
 
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
 
 		Assert.assertEquals("src/msgcmp.java:322", entry.getReference().trim());
@@ -170,7 +191,7 @@ public class GetTextTest {
 	public void testFlag() throws IOException {
 		GetText.setLocale(CATALAN);
 
-		final String id = "Unknown system error";
+		final String id = "Unknown \"system\" error";
 		final TranslationEntry entry = GetText.getTranslationEntry(CATALAN, null, id);
 
 		for(int i = 0; i < 2; i++) {
@@ -180,14 +201,14 @@ public class GetTextTest {
 
 	private static final List<String> EN = new ArrayList<String>() {
 		{
-			add("Unknown system error");
+			add("Unknown \"system\" error");
 			add("found {0} fatal error");
 			add("Here is an example of how one might continue a very long string\\nfor the common case the string represents multi-line output.\\n");
 		}
 	};
 	private static final List<String> CA = new ArrayList<String>() {
 		{
-			add("Error desconegut del sistema");
+			add("Error desconegut del \"sistema\"");
 			add("s'ha trobat {0} error fatal");
 			add("Aquí teniu un exemple de com es pot continuar una cadena molt llarga per al cas comú,\\nla cadena representa una sortida de diverses línies\\n");
 		}

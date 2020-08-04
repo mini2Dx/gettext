@@ -111,7 +111,7 @@ digits
     ;
 
 unquotedTextLiteral
-    : unquotedTextChar+
+    : ('\\"' | unquotedTextChar)+
     ;
 
 unquotedTextChar
@@ -120,7 +120,7 @@ unquotedTextChar
     ;
 
 quotedTextLiteral
-    : DOUBLEQUOTE quotedTextChar* DOUBLEQUOTE
+    : DOUBLEQUOTE ('\\"' | quotedTextChar)* DOUBLEQUOTE
     ;
 
 quotedTextChar

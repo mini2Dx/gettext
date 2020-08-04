@@ -60,6 +60,7 @@ public class TranslationContext {
 		if(entry == null) {
 			return sourceText;
 		}
+		System.out.println(entry.getStrings().isEmpty() + " " + sourceText);
 		if(entry.getStrings().isEmpty()) {
 			return sourceText;
 		}

@@ -2,7 +2,7 @@
 #. extracted-comments
 #: src/msgcmp.java:322
 msgctxt system context
-msgid "Unknown system error"
+msgid "Unknown \"system\" error"
 msgstr "不明なシステムエラー"
 
 msgctxt system context

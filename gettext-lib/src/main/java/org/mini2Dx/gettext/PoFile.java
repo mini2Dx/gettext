@@ -118,11 +118,11 @@ public class PoFile extends GetTextBaseListener {
 				if(ctx.quotedTextLiteral(i) == null) {
 					continue;
 				}
-				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+				result.append(unquoteText(ctx.quotedTextLiteral().get(i).getText()));
 			}
 			currentEntry.setContext(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
-			currentEntry.setContext(ctx.unquotedTextLiteral().getText());
+			currentEntry.setContext(repairEscapedQuotes(ctx.unquotedTextLiteral().getText()));
 		}
 	}
 
@@ -134,11 +134,11 @@ public class PoFile extends GetTextBaseListener {
 				if(ctx.quotedTextLiteral(i) == null) {
 					continue;
 				}
-				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+				result.append(unquoteText(ctx.quotedTextLiteral().get(i).getText()));
 			}
 			currentEntry.setId(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
-			currentEntry.setId(ctx.unquotedTextLiteral().getText());
+			currentEntry.setId(repairEscapedQuotes(ctx.unquotedTextLiteral().getText()));
 		}
 	}
 
@@ -150,11 +150,11 @@ public class PoFile extends GetTextBaseListener {
 				if(ctx.quotedTextLiteral(i) == null) {
 					continue;
 				}
-				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+				result.append(unquoteText(ctx.quotedTextLiteral().get(i).getText()));
 			}
 			currentEntry.setIdPlural(result.toString());
 		} else if(ctx.unquotedTextLiteral() != null) {
-			currentEntry.setIdPlural(ctx.unquotedTextLiteral().getText());
+			currentEntry.setIdPlural(repairEscapedQuotes(ctx.unquotedTextLiteral().getText()));
 		}
 	}
 
@@ -170,14 +170,14 @@ public class PoFile extends GetTextBaseListener {
 		}
 
 		if(ctx.unquotedTextLiteral() != null) {
-			currentEntry.setString(index, ctx.unquotedTextLiteral().getText());
+			currentEntry.setString(index, repairEscapedQuotes(ctx.unquotedTextLiteral().getText()));
 		} else {
 			final StringBuilder result = new StringBuilder();
 			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
 				if(ctx.quotedTextLiteral(i) == null) {
 					continue;
 				}
-				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+				result.append(unquoteText(ctx.quotedTextLiteral().get(i).getText()));
 			}
 			currentEntry.setString(index, result.toString());
 		}
@@ -186,14 +186,14 @@ public class PoFile extends GetTextBaseListener {
 	@Override
 	public void exitMessageStr(GetTextParser.MessageStrContext ctx) {
 		if(ctx.unquotedTextLiteral() != null) {
-			currentEntry.setString(0, ctx.unquotedTextLiteral().getText());
+			currentEntry.setString(0, repairEscapedQuotes(ctx.unquotedTextLiteral().getText()));
 		} else {
 			final StringBuilder result = new StringBuilder();
 			for(int i = 0; i < ctx.quotedTextLiteral().size(); i++) {
 				if(ctx.quotedTextLiteral(i) == null) {
 					continue;
 				}
-				result.append(unquoteText(ctx.quotedTextLiteral(i).getText()));
+				result.append(unquoteText(ctx.quotedTextLiteral().get(i).getText()));
 			}
 			currentEntry.setString(0, result.toString());
 		}
@@ -250,10 +250,14 @@ public class PoFile extends GetTextBaseListener {
 	}
 
 	private String unquoteText(String str) {
-		if(str.length() == 2) {
+		if(str.length() == 2 && str.equalsIgnoreCase("\"\"")) {
 			return EMPTY_STRING;
 		}
-		return str.substring(1, str.length() - 1);
+		return repairEscapedQuotes(str.substring(1, str.length() - 1));
+	}
+
+	private String repairEscapedQuotes(String str) {
+		return str.replace("\\\"", "\"");
 	}
 
 	public Locale getLocale() {

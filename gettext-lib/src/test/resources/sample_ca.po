@@ -7,8 +7,12 @@
 #, flag 1
 #. extracted-comments 1
 #| merge-comment 1
-msgid "Unknown system error"
-msgstr "Error desconegut del sistema"
+msgid "Unknown \"system\" error"
+msgstr "Error desconegut del \"sistema\""
+
+#: src/msgcmp.java:325
+msgid Unknown \"systems\" error
+msgstr Error desconegut del \"sistemas\"
 
 #: src/msgcmp.java:323
 #, java-format

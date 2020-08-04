@@ -1,8 +1,8 @@
 #  translator-comments
 #. extracted-comments
 #: src/msgcmp.java:322
-msgid "Unknown system error"
-msgstr "Unknown system error"
+msgid "Unknown \"system\" error"
+msgstr "Unknown \"system\" error"
 
 #: src/msgcmp.java:323
 #, java-format
