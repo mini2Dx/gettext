@@ -35,28 +35,28 @@ public class TranslationEntry {
 
 	public void writeTo(PrintWriter printWriter) {
 		for(String comment : translatorComments) {
-			printWriter.println("# " + comment);
+			printWriter.println("# " + comment.trim());
 		}
 		for(String comment : extractedComments) {
-			printWriter.println("#. " + comment);
+			printWriter.println("#. " + comment.trim());
 		}
 		for(String comment : flags) {
-			printWriter.println("#, " + comment);
+			printWriter.println("#, " + comment.trim());
 		}
 		for(String comment : mergeComments) {
-			printWriter.println("#| " + comment);
+			printWriter.println("#| " + comment.trim());
 		}
 		if(reference != null && !reference.isEmpty()) {
-			printWriter.println("#: " + reference);
+			printWriter.println("#: " + reference.trim());
 		}
 		if(context != null && !context.isEmpty()) {
 			printWriter.println("msgctxt \"" + context + "\"");
 		}
 		if(id != null && !id.isEmpty()) {
-			printWriter.println("msgid \"" + id + "\"");
+			printWriter.println("msgid \"" + Utils.escapeDoubleQuotes(id) + "\"");
 		}
 		if(idPlural != null && !idPlural.isEmpty()) {
-			printWriter.println("msgid_plural \"" + idPlural + "\"");
+			printWriter.println("msgid_plural \"" + Utils.escapeDoubleQuotes(idPlural) + "\"");
 		}
 		if(strings.isEmpty()) {
 			if(idPlural != null && !idPlural.isEmpty()) {
@@ -72,12 +72,12 @@ public class TranslationEntry {
 				if(str == null) {
 					printWriter.println("msgstr[" + i + "] \"\"");
 				} else {
-					printWriter.println("msgstr[" + i + "] \"" + str + "\"");
+					printWriter.println("msgstr[" + i + "] \"" + Utils.escapeDoubleQuotes(str) + "\"");
 				}
 			}
-			printWriter.println("msgid_plural \"" + idPlural + "\"");
+			printWriter.println("msgid_plural \"" + Utils.escapeDoubleQuotes(idPlural) + "\"");
 		} else {
-			printWriter.println("msgstr \"" + strings.get(0) + "\"");
+			printWriter.println("msgstr \"" + Utils.escapeDoubleQuotes(strings.get(0)) + "\"");
 		}
 	}
 

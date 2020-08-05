@@ -31,6 +31,8 @@ import java.util.Locale;
  * Parses a .po file and stores a {@link TranslationEntry} for each translation
  */
 public class PoFile extends GetTextBaseListener {
+	private static final LexerErrorListener LEXER_ERROR_LISTENER = new LexerErrorListener();
+	private static final ParserErrorListener PARSER_ERROR_LISTENER = new ParserErrorListener();
 	private static final String EMPTY_STRING = "";
 
 	private final Locale locale;
@@ -81,7 +83,11 @@ public class PoFile extends GetTextBaseListener {
 
 	private void read(CharStream charStream) {
 		final GetTextLexer lexer = new GetTextLexer(charStream);
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(LEXER_ERROR_LISTENER);
 		final GetTextParser parser = new GetTextParser(new BufferedTokenStream(lexer));
+		parser.removeErrorListeners();
+		parser.addErrorListener(PARSER_ERROR_LISTENER);
 
 		final GetTextParser.PoContext context = parser.po();
 		final ParseTreeWalker parseTreeWalker = new ParseTreeWalker();

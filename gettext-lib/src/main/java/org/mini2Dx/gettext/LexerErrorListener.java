@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext.plugin.file;
+package org.mini2Dx.gettext;
 
-public class Utils {
-	public static String escapeDoubleQuotes(String str) {
-		return str.replace("\"", "\\\"");
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
+public class LexerErrorListener implements ANTLRErrorListener<Integer> {
+
+	@Override
+	public <T extends Integer> void syntaxError(Recognizer<T, ?> recognizer, T offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+		throw new ParseCancellationException("Error parsing .po file. Line " + line + ":" + charPositionInLine + " - " + msg);
 	}
 }

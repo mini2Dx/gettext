@@ -16,6 +16,7 @@
 package org.mini2Dx.gettext.plugin.file;
 
 import org.mini2Dx.gettext.TranslationEntry;
+import org.mini2Dx.gettext.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;

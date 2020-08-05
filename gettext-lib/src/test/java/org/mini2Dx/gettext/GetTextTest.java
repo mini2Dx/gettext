@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.mini2Dx.gettext;
 
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +39,11 @@ public class GetTextTest {
 		GetText.add(EN_FILE);
 		GetText.add(CA_FILE);
 		GetText.add(JP_FILE);
+	}
+
+	@Test(expected = ParseCancellationException.class)
+	public void testExceptionOnParseFailure() throws IOException {
+		new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_error.po"));
 	}
 
 	@Test
