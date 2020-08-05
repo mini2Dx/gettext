@@ -50,25 +50,13 @@ public class TranslationEntry {
 			printWriter.println("#: " + reference);
 		}
 		if(context != null && !context.isEmpty()) {
-			if(context.contains("\"")) {
-				printWriter.println("msgctxt " + context);
-			} else {
-				printWriter.println("msgctxt \"" + context + "\"");
-			}
+			printWriter.println("msgctxt \"" + context + "\"");
 		}
 		if(id != null && !id.isEmpty()) {
-			if(id.contains("\"")) {
-				printWriter.println("msgid " + id);
-			} else {
-				printWriter.println("msgid \"" + id + "\"");
-			}
+			printWriter.println("msgid \"" + id + "\"");
 		}
 		if(idPlural != null && !idPlural.isEmpty()) {
-			if(idPlural.contains("\"")) {
-				printWriter.println("msgid_plural " + idPlural);
-			} else {
-				printWriter.println("msgid_plural \"" + idPlural + "\"");
-			}
+			printWriter.println("msgid_plural \"" + idPlural + "\"");
 		}
 		if(strings.isEmpty()) {
 			if(idPlural != null && !idPlural.isEmpty()) {
@@ -83,23 +71,13 @@ public class TranslationEntry {
 				final String str = strings.get(i);
 				if(str == null) {
 					printWriter.println("msgstr[" + i + "] \"\"");
-				} else if(str.contains("\"")) {
-					printWriter.println("msgstr[" + i + "] " + str);
 				} else {
 					printWriter.println("msgstr[" + i + "] \"" + str + "\"");
 				}
 			}
-			if(idPlural.contains("\"")) {
-				printWriter.println("msgid_plural " + idPlural);
-			} else {
-				printWriter.println("msgid_plural \"" + idPlural + "\"");
-			}
+			printWriter.println("msgid_plural \"" + idPlural + "\"");
 		} else {
-			if(strings.get(0).contains("\"")) {
-				printWriter.println("msgstr " + strings.get(0));
-			} else {
-				printWriter.println("msgstr \"" + strings.get(0) + "\"");
-			}
+			printWriter.println("msgstr \"" + strings.get(0) + "\"");
 		}
 	}
 
