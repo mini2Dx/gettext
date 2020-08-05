@@ -18,7 +18,7 @@ public class TextFileTest {
 		final List<TranslationEntry> results = new ArrayList<TranslationEntry>();
 		textFile.getTranslationEntries(results);
 
-		Assert.assertEquals(4, results.size());
+		Assert.assertEquals(5, results.size());
 
 		final TranslationEntry entry0 = results.get(0);
 		Assert.assertEquals(FILENAME + ":1", entry0.getReference());
@@ -41,5 +41,10 @@ public class TextFileTest {
 		Assert.assertEquals(FILENAME + ":7", entry3.getReference());
 		Assert.assertEquals("Line 3", entry3.getId());
 		Assert.assertEquals(0, entry3.getExtractedComments().size());
+
+		final TranslationEntry entry4 = results.get(4);
+		Assert.assertEquals(FILENAME + ":10", entry4.getReference());
+		Assert.assertEquals("Line with \\\"Quotes\\\"", entry4.getId());
+		Assert.assertEquals(1, entry4.getExtractedComments().size());
 	}
 }

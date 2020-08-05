@@ -79,7 +79,7 @@ public class TextFile implements SourceFile {
 					entry.getExtractedComments().add(line.substring(commentFormatPrefix.length()).trim());
 				} else {
 					entry.setReference(this.relativePath + ":" + lineNumber);
-					entry.setId(line);
+					entry.setId(Utils.escapeDoubleQuotes(line));
 					translationEntries.add(entry);
 					entry = null;
 				}

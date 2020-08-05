@@ -5,3 +5,6 @@ Line 1
 #. Comment 1
 Line 2
 Line 3
+
+#. Comment 3
+Line with "Quotes"
