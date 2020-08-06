@@ -12,7 +12,7 @@ GNU gettext Internationalization (i18n) for Java-based video games/applications
 The Java libary provides classes for reading .po files and accessing translations. 
 See the [wiki](https://github.com/mini2Dx/gettext/wiki) for a usage guide.
 
-Javadoc can be found [here](https://mini2dx.github.io/gettext/javadoc/1.3.0/index.html)
+Javadoc can be found [here](https://mini2dx.github.io/gettext/javadoc/1.5.0/index.html)
 
 __Gradle__
 ```gradle
