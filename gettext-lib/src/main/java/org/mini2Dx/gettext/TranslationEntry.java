@@ -18,6 +18,7 @@ package org.mini2Dx.gettext;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A single entry from a .po file
@@ -35,19 +36,19 @@ public class TranslationEntry {
 
 	public void writeTo(PrintWriter printWriter) {
 		for(String comment : translatorComments) {
-			printWriter.println("# " + comment.trim());
+			printWriter.println("# " + trimComment(comment));
 		}
 		for(String comment : extractedComments) {
-			printWriter.println("#. " + comment.trim());
+			printWriter.println("#. " + trimComment(comment));
 		}
 		for(String comment : flags) {
-			printWriter.println("#, " + comment.trim());
+			printWriter.println("#, " + trimComment(comment));
 		}
 		for(String comment : mergeComments) {
-			printWriter.println("#| " + comment.trim());
+			printWriter.println("#| " + trimComment(comment));
 		}
 		if(reference != null && !reference.isEmpty()) {
-			printWriter.println("#: " + reference.trim());
+			printWriter.println("#: " + trimComment(reference));
 		}
 		if(context != null && !context.isEmpty()) {
 			printWriter.println("msgctxt \"" + context + "\"");
@@ -140,5 +141,48 @@ public class TranslationEntry {
 			strings.add(null);
 		}
 		strings.set(index, str);
+	}
+
+	private String trimComment(String str) {
+		if(str.charAt(0) == ' ') {
+			return str.substring(1);
+		}
+		return str;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TranslationEntry entry = (TranslationEntry) o;
+		return Objects.equals(translatorComments, entry.translatorComments) &&
+				Objects.equals(extractedComments, entry.extractedComments) &&
+				Objects.equals(flags, entry.flags) &&
+				Objects.equals(mergeComments, entry.mergeComments) &&
+				Objects.equals(reference, entry.reference) &&
+				Objects.equals(context, entry.context) &&
+				Objects.equals(id, entry.id) &&
+				Objects.equals(idPlural, entry.idPlural) &&
+				Objects.equals(strings, entry.strings);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(translatorComments, extractedComments, flags, mergeComments, reference, context, id, idPlural, strings);
+	}
+
+	@Override
+	public String toString() {
+		return "TranslationEntry{" +
+				"translatorComments=" + translatorComments +
+				", extractedComments=" + extractedComments +
+				", flags=" + flags +
+				", mergeComments=" + mergeComments +
+				", reference='" + reference + '\'' +
+				", context='" + context + '\'' +
+				", id='" + id + '\'' +
+				", idPlural='" + idPlural + '\'' +
+				", strings=" + strings +
+				'}';
 	}
 }
