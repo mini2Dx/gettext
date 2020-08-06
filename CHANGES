@@ -1,5 +1,8 @@
 [1.5.0]
 - API will now throw exception on .po parse failure
+- Plugin now takes advantage of Gradle task cache
+- Fix nullpointer in trn method when source string is not registered
+- Fix comment merging when reading and writing a PoFile
 
 [1.4.0]
 - Always wrap in double quotes when outputting a PoFile
