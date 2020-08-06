@@ -41,7 +41,24 @@ class GetTextPlugin implements Plugin<Project> {
 
                 project.getTasks().register(taskName, GeneratePotTask.class, new Action<GeneratePotTask>() {
                     public void execute(GeneratePotTask task) {
-                        task.source = getTextSource;
+                        task.srcDir = getTextSource.srcDir;
+                        task.include = getTextSource.include;
+                        task.exclude = getTextSource.exclude;
+                        task.excludes = getTextSource.excludes;
+                        task.commentFormat = getTextSource.commentFormat;
+
+                        File outputDirectory;
+                        if(getTextSource.outputPath == null) {
+                            outputDirectory = new File(project.getBuildDir(), 'gettext');
+                        } else if(getTextSource.outputPath.startsWith(".")) {
+                            outputDirectory = new File(project.getProjectDir(), getTextSource.outputPath);
+                        } else {
+                            outputDirectory = new File(getTextSource.outputPath);
+                            if(!outputDirectory.isAbsolute()) {
+                                outputDirectory = new File(project.getProjectDir(), getTextSource.outputPath);
+                            }
+                        }
+                        task.outputFile = new File(outputDirectory, getTextSource.outputFilename);
                     }
                 });
             }

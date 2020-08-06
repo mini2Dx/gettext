@@ -17,6 +17,11 @@ package org.mini2Dx.gettext.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.mini2Dx.gettext.PoFile
 import org.mini2Dx.gettext.TranslationEntry
@@ -25,21 +30,37 @@ import org.mini2Dx.gettext.plugin.file.SourceFile
 import org.mini2Dx.gettext.plugin.file.SourceFileParser
 
 class GeneratePotTask extends DefaultTask {
-    def GetTextSource source;
+    public static final String DEFAULT_COMMENT_FORMAT = "#.";
+
+    @InputDirectory
+    public String srcDir;
+    @Input
+    public String include;
+    @Input
+    @Optional
+    public String exclude;
+    @Input
+    @Optional
+    public String[] excludes;
+    @Input
+    @Optional
+    public String commentFormat = "#.";
+    @OutputFile
+    public File outputFile;
 
     @TaskAction
     public void run() throws IOException {
-        final FileTree sourceFiles = project.fileTree(source.srcDir) {
-            include source.include;
+        final FileTree sourceFiles = project.fileTree(this.srcDir) {
+            include this.include;
 
-            if(source.excludes != null) {
-                for (String excludePath : source.excludes) {
+            if(this.excludes != null) {
+                for (String excludePath : this.excludes) {
                     exclude excludePath;
                 }
             }
 
-            if(source.exclude != null) {
-                exclude source.exclude;
+            if(this.exclude != null) {
+                exclude this.exclude;
             }
         };
 
@@ -51,17 +72,14 @@ class GeneratePotTask extends DefaultTask {
             poFile.getEntries().addAll(entries);
             entries.clear();
         }
-
-        final File outputDirectory = source.outputPath == null ? new File(project.getBuildDir(), 'gettext') : new File(project.getProjectDir(), source.outputPath);
-        if(!outputDirectory.exists()) {
-            outputDirectory.mkdirs();
+        if(!outputFile.getParentFile().exists()) {
+            outputFile.getParentFile().mkdirs();
         }
-        final File outputFile = new File(outputDirectory, source.outputFilename);
         poFile.saveTo(outputFile);
     }
 
     private void generateTranslationEntries(File file, String relativePath, List<TranslationEntry> results) {
-        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, source.commentFormat);
+        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, this.commentFormat);
         sourceFile.getTranslationEntries(results);
         sourceFile.dispose();
     }
