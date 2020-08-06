@@ -33,6 +33,12 @@ public class TranslationContext {
 		} else {
 			entry = entriesByPluralId.get(sourcePluralText);
 		}
+		if(entry == null) {
+			return sourceText;
+		}
+		if(entry.getStrings().isEmpty()) {
+			return sourceText;
+		}
 		if(n >= entry.getStrings().size()) {
 			return entry.getStrings().get(entry.getStrings().size() - 1);
 		}
@@ -60,7 +66,6 @@ public class TranslationContext {
 		if(entry == null) {
 			return sourceText;
 		}
-		System.out.println(entry.getStrings().isEmpty() + " " + sourceText);
 		if(entry.getStrings().isEmpty()) {
 			return sourceText;
 		}
