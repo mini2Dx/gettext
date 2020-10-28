@@ -28,6 +28,7 @@ public class LuaFileTest {
 	private static final String TRN_FILENAME = "sampleTrn.lua";
 	private static final String TRNC_FILENAME = "sampleTrnc.lua";
 	private static final String COMMENT_FORMAT = "#.";
+	private static final String FORCE_EXTRACT_FORMAT = "#!extract";
 
 	private static final String TR_CUSTOM_COMMENT_FILENAME = "sampleTrCustomComment.lua";
 	private static final String CUSTOM_COMMENT_FORMAT = " #. ";
@@ -38,20 +39,31 @@ public class LuaFileTest {
 
 	@BeforeClass
 	public static void loadFiles() throws IOException {
-		TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME, COMMENT_FORMAT);
-		TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT);
-		TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT);
-		TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT);
-		TR_CUSTOM_COMMENT_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME, CUSTOM_COMMENT_FORMAT);
+		try {
+			TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+			TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+			TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+			TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+			TR_CUSTOM_COMMENT_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME, CUSTOM_COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@AfterClass
 	public static void disposeFiles() {
-		TR_FILE.dispose();
-		TRC_FILE.dispose();
-		TRN_FILE.dispose();
-		TRNC_FILE.dispose();
-		TR_CUSTOM_COMMENT_FILE.dispose();
+		dispose(TR_FILE);
+		dispose(TRC_FILE);
+		dispose(TRN_FILE);
+		dispose(TRNC_FILE);
+		dispose(TR_CUSTOM_COMMENT_FILE);
+	}
+
+	private static void dispose(LuaFile file) {
+		if(file == null) {
+			return;
+		}
+		file.dispose();
 	}
 
 	@After
@@ -62,8 +74,7 @@ public class LuaFileTest {
 	@Test
 	public void testTr() {
 		TR_FILE.getTranslationEntries(results);
-
-		Assert.assertEquals(4, results.size());
+		Assert.assertEquals(7, results.size());
 
 		final TranslationEntry entry0 = results.get(0);
 		Assert.assertEquals(TR_FILENAME + ":1", entry0.getReference());
@@ -85,6 +96,22 @@ public class LuaFileTest {
 		Assert.assertEquals("Tr with args and comment", entry3.getId());
 		Assert.assertEquals(1, entry3.getExtractedComments().size());
 		Assert.assertEquals("Comment 1", entry3.getExtractedComments().get(0));
+
+		final TranslationEntry entry4 = results.get(4);
+		Assert.assertEquals(TR_FILENAME + ":12", entry4.getReference());
+		Assert.assertEquals("value1", entry4.getId());
+		Assert.assertEquals(0, entry4.getExtractedComments().size());
+
+		final TranslationEntry entry5 = results.get(5);
+		Assert.assertEquals(TR_FILENAME + ":12", entry5.getReference());
+		Assert.assertEquals("value2", entry5.getId());
+		Assert.assertEquals(0, entry5.getExtractedComments().size());
+
+		final TranslationEntry entry6 = results.get(6);
+		Assert.assertEquals(TR_FILENAME + ":15", entry6.getReference());
+		Assert.assertEquals("value0", entry6.getId());
+		Assert.assertEquals(1, entry6.getExtractedComments().size());
+		Assert.assertEquals("Comment 2", entry6.getExtractedComments().get(0));
 	}
 
 	@Test

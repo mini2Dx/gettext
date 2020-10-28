@@ -1,3 +1,6 @@
+[1.6.0]
+- Can now manually identify text for extraction when not using a GetText API call. Use #!extract
+
 [1.5.0]
 - API will now throw exception on .po parse failure
 - Plugin now takes advantage of Gradle task cache

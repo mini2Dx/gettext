@@ -62,7 +62,7 @@ public class JavaFileTest {
 	@Test
 	public void testTr() {
 		TR_FILE.getTranslationEntries(results);
-		Assert.assertEquals(7, results.size());
+		Assert.assertEquals(9, results.size());
 
 		final TranslationEntry entry0 = results.get(0);
 		Assert.assertEquals(TR_FILENAME + ":17", entry0.getReference());
@@ -100,6 +100,17 @@ public class JavaFileTest {
 		Assert.assertEquals("Static ref multi line", entry6.getId());
 		Assert.assertEquals(1, entry6.getExtractedComments().size());
 		Assert.assertEquals("Comment 2", entry6.getExtractedComments().get(0));
+
+		final TranslationEntry entry7 = results.get(7);
+		Assert.assertEquals(TR_FILENAME + ":37", entry7.getReference());
+		Assert.assertEquals("Force Extract 1", entry7.getId());
+		Assert.assertEquals(0, entry7.getExtractedComments().size());
+
+		final TranslationEntry entry8 = results.get(8);
+		Assert.assertEquals(TR_FILENAME + ":41", entry8.getReference());
+		Assert.assertEquals("Force Extract 2", entry8.getId());
+		Assert.assertEquals(1, entry8.getExtractedComments().size());
+		Assert.assertEquals("Comment 3", entry8.getExtractedComments().get(0));
 	}
 
 	@Test

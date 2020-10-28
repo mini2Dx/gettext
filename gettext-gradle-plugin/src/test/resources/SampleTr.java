@@ -32,5 +32,16 @@ public class HelloWorld  {
 
 		//#.Comment 2
 		System.out.println(GetText.tr(Locale.ENGLISH, STATIC_REF_MULTI_LINE, 7));
+
+		//#!extract
+		final String forced = "Force Extract 1";
+
+		//#!extract
+		//#.Comment 3
+		method(forced, "Force Extract 2");
+	}
+
+	private void method(String var1, String var2) {
+
 	}
 }

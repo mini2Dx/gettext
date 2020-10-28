@@ -31,6 +31,7 @@ import org.mini2Dx.gettext.plugin.file.SourceFileParser
 
 class GeneratePotTask extends DefaultTask {
     public static final String DEFAULT_COMMENT_FORMAT = "#.";
+    public static final String DEFAULT_FORCE_EXTRACT_FORMAT = "#!extract";
 
     @InputDirectory
     public String srcDir;
@@ -45,6 +46,9 @@ class GeneratePotTask extends DefaultTask {
     @Input
     @Optional
     public String commentFormat = "#.";
+    @Input
+    @Optional
+    public String forceExtractFormat = "#!extract";
     @OutputFile
     public File outputFile;
 
@@ -79,7 +83,7 @@ class GeneratePotTask extends DefaultTask {
     }
 
     private void generateTranslationEntries(File file, String relativePath, List<TranslationEntry> results) {
-        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, this.commentFormat);
+        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, this.commentFormat, this.forceExtractFormat);
         sourceFile.getTranslationEntries(results);
         sourceFile.dispose();
     }
