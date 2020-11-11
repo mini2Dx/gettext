@@ -197,11 +197,10 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 		if(ctx.varOrExp() != null) {
 			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
 				generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(),
-						ctx.nameAndArgs().size() > 0 && ctx.nameAndArgs(0).NAME() != null ? ctx.nameAndArgs(0).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
+						ctx.nameAndArgs(i).NAME() != null ? ctx.nameAndArgs(i).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
 			}
 		} else {
 			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-				System.out.println("FUNC " + ctx.nameAndArgs(i).NAME().getText());
 				generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
 			}
 		}
@@ -336,6 +335,12 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	}
 
 	protected String getArgument(int lineNumber, LuaParser.ArgsContext argsContext, int index) {
+		if(argsContext.explist() == null) {
+			return "";
+		}
+		if(argsContext.explist().exp() == null) {
+			return "";
+		}
 		if(index < 0) {
 			return "";
 		} else if(index >= argsContext.explist().exp().size()) {
