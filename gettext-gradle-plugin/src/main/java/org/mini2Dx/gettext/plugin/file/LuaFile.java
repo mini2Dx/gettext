@@ -188,7 +188,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	@Override
 	public void exitPrefixexp(LuaParser.PrefixexpContext ctx) {
 		for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-			generateTranslationEntry(ctx.getStart().getLine(), ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
+			generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
 		}
 	}
 
@@ -196,11 +196,13 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	public void exitFunctioncall(LuaParser.FunctioncallContext ctx) {
 		if(ctx.varOrExp() != null) {
 			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-				generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
+				generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(),
+						ctx.nameAndArgs().size() > 0 && ctx.nameAndArgs(0).NAME() != null ? ctx.nameAndArgs(0).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
 			}
 		} else {
 			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-				generateTranslationEntry(ctx.getStart().getLine(), ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
+				System.out.println("FUNC " + ctx.nameAndArgs(i).NAME().getText());
+				generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
 			}
 		}
 	}
@@ -212,7 +214,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @param args
 	 * @return if a {@link TranslationEntry} has been generated
 	 */
-	protected boolean generateTranslationEntry(int lineNumber, String functionName, LuaParser.ArgsContext args) {
+	protected boolean generateTranslationEntry(int lineNumber, String variableName, String functionName, LuaParser.ArgsContext args) {
 		if(!isGetTextFunction(lineNumber, functionName)) {
 			return false;
 		}
