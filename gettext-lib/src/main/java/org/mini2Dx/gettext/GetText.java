@@ -134,7 +134,7 @@ public class GetText {
 	public static String tr(Locale locale, String sourceText, Object... values) {
 		final TranslationMap translationMap = TRANSLATIONS.get(locale);
 		if(translationMap == null) {
-			return MessageFormat.format(sourceText, values);
+			return MessageFormat.format(TranslationMap.messageFormatSanitise(sourceText), values);
 		}
 		return translationMap.tr(sourceText, values);
 	}
@@ -156,7 +156,7 @@ public class GetText {
 	public static String trc(Locale locale, String context, String sourceText, Object... values) {
 		final TranslationMap translationMap = TRANSLATIONS.get(locale);
 		if(translationMap == null) {
-			return MessageFormat.format(sourceText, values);
+			return MessageFormat.format(TranslationMap.messageFormatSanitise(sourceText), values);
 		}
 		return translationMap.trc(context, sourceText, values);
 	}
@@ -178,7 +178,10 @@ public class GetText {
 	public static String trn(Locale locale, String sourceText, String sourcePluralText, int n, Object... values) {
 		final TranslationMap translationMap = TRANSLATIONS.get(locale);
 		if(translationMap == null) {
-			return MessageFormat.format(sourcePluralText, values);
+			if(n > 1) {
+				return MessageFormat.format(TranslationMap.messageFormatSanitise(sourcePluralText), values);
+			}
+			return MessageFormat.format(TranslationMap.messageFormatSanitise(sourceText), values);
 		}
 		return translationMap.trn(sourceText, sourcePluralText, n, values);
 	}
@@ -200,7 +203,10 @@ public class GetText {
 	public static String trnc(Locale locale, String context, String sourceText, String sourcePluralText, int n, Object... values) {
 		final TranslationMap translationMap = TRANSLATIONS.get(locale);
 		if (translationMap == null) {
-			return MessageFormat.format(sourcePluralText, values);
+			if(n > 1) {
+				return MessageFormat.format(TranslationMap.messageFormatSanitise(sourcePluralText), values);
+			}
+			return MessageFormat.format(TranslationMap.messageFormatSanitise(sourceText), values);
 		}
 		return translationMap.trnc(context, sourceText, sourcePluralText, n, values);
 	}

@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -112,6 +113,7 @@ public class GetTextTest {
 		GetText.setLocale(CATALAN);
 
 		Assert.assertEquals("s'ha trobat 7 error fatal", GetText.tr("found {0} fatal error", 7));
+		Assert.assertEquals("s'ha trobat 7 error fatal", GetText.tr("found {0} fatal error", 7));
 	}
 
 	@Test
@@ -123,6 +125,13 @@ public class GetTextTest {
 	}
 
 	@Test
+	public void testTrWithValuesNoStringMatchOrLocale() throws IOException {
+		GetText.setLocale(Locale.CANADA_FRENCH);
+
+		Assert.assertEquals("example's 7 fatal error", GetText.tr("example's {0} fatal error", 7));
+	}
+
+	@Test
 	public void testTrcWithValues() throws IOException {
 		GetText.setLocale(Locale.JAPAN);
 
@@ -130,6 +139,13 @@ public class GetTextTest {
 		final String id = "found {0} fatal error";
 		final String result = "{0}致命的なエラーを発見";
 		Assert.assertEquals(result, GetText.trc(context, id));
+	}
+
+	@Test
+	public void testTrcWithValuesNoStringMatchOrLocale() throws IOException {
+		GetText.setLocale(Locale.CANADA_FRENCH);
+
+		Assert.assertEquals("example's 7 fatal error", GetText.trc("context", "example's {0} fatal error", 7));
 	}
 
 	@Test
@@ -144,6 +160,13 @@ public class GetTextTest {
 	}
 
 	@Test
+	public void testTrnWithValuesNoStringMatchOrLocale() throws IOException {
+		GetText.setLocale(Locale.CANADA_FRENCH);
+
+		Assert.assertEquals("example's 7 fatal errors", GetText.trn("example's {0} fatal error", "example's {0} fatal errors", 2, 7));
+	}
+
+	@Test
 	public void testTrncWithValues() throws IOException {
 		GetText.setLocale(Locale.JAPAN);
 
@@ -153,6 +176,13 @@ public class GetTextTest {
 
 		Assert.assertEquals("9致命的なエラーを発見", GetText.trnc(context, id, idPlural, 0, 9));
 		Assert.assertEquals("4致命的なエラーを発見", GetText.trnc(context, id, idPlural, 1, 4));
+	}
+
+	@Test
+	public void testTrncWithValuesNoStringMatchOrLocale() throws IOException {
+		GetText.setLocale(Locale.CANADA_FRENCH);
+
+		Assert.assertEquals("example's 7 fatal errors", GetText.trnc("context","example's {0} fatal error", "example's {0} fatal errors", 2, 7));
 	}
 
 	@Test

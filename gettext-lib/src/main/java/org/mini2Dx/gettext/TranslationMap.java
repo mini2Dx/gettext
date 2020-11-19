@@ -49,7 +49,7 @@ public class TranslationMap {
 	}
 
 	public String trc(String context, String sourceText, Object... values) {
-		return MessageFormat.format(tr(sourceText), values);
+		return MessageFormat.format(messageFormatSanitise(tr(sourceText)), values);
 	}
 
 	public String trn(String sourceText, String sourcePluralText, int n) {
@@ -103,7 +103,7 @@ public class TranslationMap {
 
 	private String format(String id, String str, Object... values) {
 		if(!messageFormatsCache.containsKey(id)) {
-			messageFormatsCache.put(id, new MessageFormat(str.replace("'", "''"), locale));
+			messageFormatsCache.put(id, new MessageFormat(messageFormatSanitise(str), locale));
 		}
 		return messageFormatsCache.get(id).format(values,
 				new StringBuffer(str.length() + (values == null ? 1 : values.length)), null).toString();
@@ -125,5 +125,9 @@ public class TranslationMap {
 			}
 			context.add(entry);
 		}
+	}
+
+	public static String messageFormatSanitise(String str) {
+		return str.replace("'", "''");
 	}
 }
