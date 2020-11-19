@@ -16,7 +16,7 @@ Javadoc can be found [here](https://mini2dx.github.io/gettext/javadoc/1.5.0/inde
 
 __Gradle__
 ```gradle
-compile "org.mini2Dx:gettext-lib:1.7.0"
+compile "org.mini2Dx:gettext-lib:1.7.1"
 ```
 
 __Maven__
@@ -24,7 +24,7 @@ __Maven__
 <dependency>
     <groupId>org.mini2Dx</groupId>
     <artifactId>gettext-lib</artifactId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
 </dependency>
 ```
 
