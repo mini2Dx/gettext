@@ -115,6 +115,14 @@ public class GetTextTest {
 	}
 
 	@Test
+	public void testTrWithValuesNoLocale() throws IOException {
+		GetText.setLocale(Locale.ENGLISH);
+
+		Assert.assertEquals("found 7 fatal error", GetText.tr("found {0} fatal error", 7));
+		Assert.assertEquals("found 7 fatal error", GetText.tr("found {0} fatal error", new Object[] { 7 }));
+	}
+
+	@Test
 	public void testTrcWithValues() throws IOException {
 		GetText.setLocale(Locale.JAPAN);
 
