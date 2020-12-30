@@ -1,3 +1,6 @@
+[1.7.2]
+- Handle parsing Lua assigning function results to variables
+
 [1.7.1]
 - Fix incorrect single quote escaping when no translation entry exists
 
