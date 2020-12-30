@@ -187,22 +187,39 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 
 	@Override
 	public void exitPrefixexp(LuaParser.PrefixexpContext ctx) {
-		for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-			generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
+		try {
+			if(ctx.varOrExp() != null) {
+				for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
+					generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(),
+							ctx.nameAndArgs(i).NAME() != null ? ctx.nameAndArgs(i).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
+				}
+			} else {
+				for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
+					generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error parsing line: " + ctx.getStart().getLine());
+			throw e;
 		}
 	}
 
 	@Override
 	public void exitFunctioncall(LuaParser.FunctioncallContext ctx) {
-		if(ctx.varOrExp() != null) {
-			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-				generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(),
-						ctx.nameAndArgs(i).NAME() != null ? ctx.nameAndArgs(i).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
+		try {
+			if(ctx.varOrExp() != null) {
+				for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
+					generateTranslationEntry(ctx.getStart().getLine(), ctx.varOrExp().var().NAME().getText(),
+							ctx.nameAndArgs(i).NAME() != null ? ctx.nameAndArgs(i).NAME().getText() : ctx.varOrExp().var().NAME().getText(), ctx.nameAndArgs(i).args());
+				}
+			} else {
+				for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
+					generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
+				}
 			}
-		} else {
-			for(int i = 0; i < ctx.nameAndArgs().size(); i++) {
-				generateTranslationEntry(ctx.getStart().getLine(), "", ctx.nameAndArgs(i).NAME().getText(), ctx.nameAndArgs(i).args());
-			}
+		} catch (Exception e) {
+			System.err.println("Error parsing line: " + ctx.getStart().getLine());
+			throw e;
 		}
 	}
 
