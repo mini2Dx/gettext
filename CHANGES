@@ -1,3 +1,8 @@
+[1.8.0]
+- Add XLSX library
+ - Convert POT files to Excel workbooks
+ - Convert Excel workbooks into PO files
+
 [1.7.2]
 - Handle parsing Lua assigning function results to variables
 

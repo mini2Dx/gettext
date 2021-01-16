@@ -1,0 +1,21 @@
+#. Rain Dye
+#: _generated/l10n/item-descriptions.txt:2
+msgid "Box"
+msgid_plural "Boxes"
+msgstr ""
+
+#. Tropic Flower
+#: _generated/l10n/item-descriptions.txt:4
+msgctxt "ui"
+msgid "A tropic star flower."
+msgstr ""
+
+#. Zapling
+#: _generated/l10n/item-descriptions.txt:6
+msgid "A young zapple emerging from its seed."
+msgstr ""
+
+#. Slim Gum
+#: _generated/l10n/item-descriptions.txt:8
+msgid "A tough gum refined from slimroot stalks."
+msgstr ""

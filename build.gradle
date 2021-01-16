@@ -48,7 +48,11 @@ def mavenProjects() {
 	subprojects.findAll { !it.name.contains('antlr') }
 }
 
-def projectVersion = '1.7.2';
+def projectVersion = '1.8.0';
+
+def docProjects() {
+	subprojects.findAll { !it.name.contains('gradle') && !it.name.contains('antlr') }
+}
 
 configure(mavenProjects()) {
 	apply plugin: "signing"
@@ -164,18 +168,31 @@ project(":gettext-lib") {
 		testCompile "org.jmock:jmock-legacy:$jmockVersion"
 		testCompile "org.jmock:jmock-junit4:$jmockVersion"	
 	}
+	
+	compileJava.dependsOn copyAntlrSourcesToProject
+}
+
+project(":gettext-xlsx") {
+	description = 'Library to convert .po files to/from xlsx'
+
+	dependencies {
+		compile project(":gettext-lib")
+		compile "org.apache.poi:poi-ooxml:4.1.2"
+
+		testCompile "junit:junit:$junitVersion"
+		testCompile "org.jmock:jmock-legacy:$jmockVersion"
+		testCompile "org.jmock:jmock-junit4:$jmockVersion"
+	}
 
 	if(!project.version.contains("SNAPSHOT")) {
 		task docs(type: Javadoc) {
 			failOnError = false
 			title = 'gettext'
-			source project.sourceSets.main.allJava
-			classpath = project.sourceSets.main.compileClasspath
+			source docProjects().collect {p -> p.sourceSets.main.allJava }
+			classpath = files(docProjects().collect {p -> p.sourceSets.main.compileClasspath})
 			destinationDir = rootProject.file("docs/javadoc/${projectVersion}")
 		}
 	}
-	
-	compileJava.dependsOn copyAntlrSourcesToProject
 }
 
 project(":gettext-gradle-plugin") {
