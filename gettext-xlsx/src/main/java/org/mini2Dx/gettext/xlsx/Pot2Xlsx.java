@@ -15,8 +15,12 @@
  ******************************************************************************/
 package org.mini2Dx.gettext.xlsx;
 
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.mini2Dx.gettext.PoFile;
 import org.mini2Dx.gettext.TranslationEntry;
@@ -65,12 +69,21 @@ public class Pot2Xlsx {
 	private static void convertFile(final Locale sourceLocale, final XSSFWorkbook workbook, final String relativeFilePath, final PoFile poFile) throws IOException {
 		final Sheet sheet = workbook.createSheet(relativeFilePath);
 
+		final XSSFFont font = workbook.createFont();
+		font.setColor(IndexedColors.WHITE.getIndex());
+		font.setBold(true);
+
+		final XSSFCellStyle style = workbook.createCellStyle();
+		style.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setFont(font);
+
 		final Row headerRow = sheet.createRow(0);
-		setCell(headerRow, 0, "Reference");
-		setCell(headerRow, 1, "Context");
-		setCell(headerRow, 2, "Extracted Comments");
-		setCell(headerRow, 3, sourceLocale.getDisplayName() + " (singular)");
-		setCell(headerRow, 4, sourceLocale.getDisplayName() + " (plural)");
+		setCell(headerRow, 0, "Reference", style);
+		setCell(headerRow, 1, "Context", style);
+		setCell(headerRow, 2, "Extracted Comments", style);
+		setCell(headerRow, 3, sourceLocale.getDisplayName() + " (singular)", style);
+		setCell(headerRow, 4, sourceLocale.getDisplayName() + " (plural)", style);
 		sheet.createFreezePane( 0, 1, 0, 1 );
 
 		int rowIndex = 1;
@@ -92,7 +105,16 @@ public class Pot2Xlsx {
 		}
 	}
 
+	private static void setCell(Row row, int cellIndex, String value, XSSFCellStyle style) {
+		setCell(row, cellIndex, value);
+		setCellStyle(row, cellIndex, style);
+	}
+
 	private static void setCell(Row row, int cellIndex, String value) {
 		row.createCell(cellIndex).setCellValue(value);
+	}
+
+	private static void setCellStyle(Row row, int cellIndex, XSSFCellStyle style) {
+		row.getCell(cellIndex).setCellStyle(style);
 	}
 }
