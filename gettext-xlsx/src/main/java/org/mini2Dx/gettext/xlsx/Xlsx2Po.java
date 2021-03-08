@@ -79,6 +79,10 @@ public class Xlsx2Po {
 				final String id = getCell(row, 3);
 				final String idPlural = getCell(row, 4);
 
+				if(id.isEmpty() && idPlural.isEmpty()) {
+					continue;
+				}
+
 				for(int columnIndex = 5; columnIndex < row.getLastCellNum(); columnIndex++) {
 					final Locale locale = localeIndices.get(columnIndex);
 					final PoFile poFile = poFiles.get(locale);

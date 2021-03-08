@@ -1,6 +1,7 @@
 [1.9.1]
 - Fix PoFile not reading UTF8 characters correctly depending on constructor used
 - TranslationEntry no longer outputs empty comments
+- Xlsx2Po will now skip over rows with empty IDs
 
 [1.9.0]
 - Can now ignore lines during automatic extraction using #!ignore
