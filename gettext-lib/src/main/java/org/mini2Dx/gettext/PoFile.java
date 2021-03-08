@@ -42,7 +42,7 @@ public class PoFile extends GetTextBaseListener {
 	private TranslationEntry currentEntry = null;
 	
 	public PoFile(Locale locale, File file) throws IOException {
-		this(locale, new FileReader(file));
+		this(locale, new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8.name()));
 	}
 
 	public PoFile(Locale locale, Reader reader) throws IOException {
@@ -54,7 +54,7 @@ public class PoFile extends GetTextBaseListener {
 	}
 
 	public PoFile(Locale locale, File file, PoParseSettings parseSettings) throws IOException {
-		this(locale, new FileReader(file), parseSettings);
+		this(locale, new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8.name()), parseSettings);
 	}
 
 	public PoFile(Locale locale, Reader reader, PoParseSettings parseSettings) throws IOException {
