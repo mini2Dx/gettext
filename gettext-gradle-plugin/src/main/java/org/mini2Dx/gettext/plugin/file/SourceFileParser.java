@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class SourceFileParser {
 
-	public static SourceFile parse(File file, String relativePath, String commentFormat, String forceExtractFormat) throws IOException {
+	public static SourceFile parse(File file, String relativePath, String commentFormat, String forceExtractFormat, String ignoreFormat) throws IOException {
 		final String filename = file.getName().toLowerCase();
 		if(!filename.contains(".")) {
 			throw new RuntimeException("Cannot file type for file " + relativePath);
@@ -29,9 +29,9 @@ public class SourceFileParser {
 		final String suffix = filename.substring(filename.lastIndexOf('.') + 1);
 		switch(suffix) {
 		case "lua":
-			return new LuaFile(new FileInputStream(file), relativePath, commentFormat, forceExtractFormat);
+			return new LuaFile(new FileInputStream(file), relativePath, commentFormat, forceExtractFormat, ignoreFormat);
 		case "java":
-			return new JavaFile(new FileInputStream(file), relativePath, commentFormat, forceExtractFormat);
+			return new JavaFile(new FileInputStream(file), relativePath, commentFormat, forceExtractFormat, ignoreFormat);
 		case "txt":
 			return new TextFile(new FileInputStream(file), relativePath, commentFormat);
 		default:

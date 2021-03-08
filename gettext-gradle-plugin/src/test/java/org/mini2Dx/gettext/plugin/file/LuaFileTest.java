@@ -29,6 +29,7 @@ public class LuaFileTest {
 	private static final String TRNC_FILENAME = "sampleTrnc.lua";
 	private static final String COMMENT_FORMAT = "#.";
 	private static final String FORCE_EXTRACT_FORMAT = "#!extract";
+	private static final String IGNORE_FORMAT = "#!ignore";
 
 	private static final String TR_CUSTOM_COMMENT_FILENAME = "sampleTrCustomComment.lua";
 	private static final String CUSTOM_COMMENT_FORMAT = " #. ";
@@ -40,11 +41,16 @@ public class LuaFileTest {
 	@BeforeClass
 	public static void loadFiles() throws IOException {
 		try {
-			TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
-			TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
-			TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
-			TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME, COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
-			TR_CUSTOM_COMMENT_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME, CUSTOM_COMMENT_FORMAT, FORCE_EXTRACT_FORMAT);
+			TR_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_FILENAME), TR_FILENAME,
+					COMMENT_FORMAT, FORCE_EXTRACT_FORMAT, IGNORE_FORMAT);
+			TRC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRC_FILENAME), TRC_FILENAME,
+					COMMENT_FORMAT, FORCE_EXTRACT_FORMAT, IGNORE_FORMAT);
+			TRN_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRN_FILENAME), TRN_FILENAME,
+					COMMENT_FORMAT, FORCE_EXTRACT_FORMAT, IGNORE_FORMAT);
+			TRNC_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TRNC_FILENAME), TRNC_FILENAME,
+					COMMENT_FORMAT, FORCE_EXTRACT_FORMAT, IGNORE_FORMAT);
+			TR_CUSTOM_COMMENT_FILE = new LuaFile(LuaFileTest.class.getResourceAsStream("/" + TR_CUSTOM_COMMENT_FILENAME), TR_CUSTOM_COMMENT_FILENAME,
+					CUSTOM_COMMENT_FORMAT, FORCE_EXTRACT_FORMAT, IGNORE_FORMAT);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

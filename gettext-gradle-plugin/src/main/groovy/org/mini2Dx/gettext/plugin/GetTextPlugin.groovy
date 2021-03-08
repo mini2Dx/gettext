@@ -46,6 +46,8 @@ class GetTextPlugin implements Plugin<Project> {
                         task.exclude = getTextSource.exclude;
                         task.excludes = getTextSource.excludes;
                         task.commentFormat = getTextSource.commentFormat;
+                        task.forceExtractFormat = getTextSource.forceExtractFormat;
+                        task.commentFormat = getTextSource.commentFormat;
 
                         File outputDirectory;
                         if(getTextSource.outputPath == null) {

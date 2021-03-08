@@ -8,3 +8,6 @@ npc:say(GetText:trn(ref1, ref2, 2))
 
 --#. Comment 1
 npc:say(GetText:trn("Tr with args and comment", "Tr with args and comment plural", 1))
+
+--#!ignore
+npc:say(GetText:tr("IGNORED", 2))

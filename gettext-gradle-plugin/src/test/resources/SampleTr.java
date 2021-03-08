@@ -39,6 +39,9 @@ public class HelloWorld  {
 		//#!extract
 		//#.Comment 3
 		method(forced, "Force Extract 2");
+
+		//#!ignore
+		System.out.println(GetText.tr(Locale.ENGLISH, "IGNORED"));
 	}
 
 	private void method(String var1, String var2) {

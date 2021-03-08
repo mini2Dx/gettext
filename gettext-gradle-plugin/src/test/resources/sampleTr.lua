@@ -13,3 +13,6 @@ local tbl = {"value1", "value2"}
 --#!extract
 --#. Comment 2
 table.insert(tbl, "value0")
+
+--#!ignore
+npc:say(GetText:tr("IGNORED", 2))

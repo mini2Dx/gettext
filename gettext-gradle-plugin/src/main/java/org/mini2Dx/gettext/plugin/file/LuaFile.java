@@ -39,6 +39,7 @@ import java.util.*;
 public class LuaFile extends LuaBaseListener implements SourceFile {
 	public static final String DEFAULT_COMMENT_FORMAT = "#.";
 	public static final String DEFAULT_FORCE_EXTRACT_FORMAT = "#!extract";
+	public static final String DEFAULT_IGNORE_EXTRACT_FORMAT = "#!ignore";
 
 	protected final String relativePath;
 	protected final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
@@ -48,6 +49,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	protected final Map<String, Integer> variableByLineNumber = new HashMap<String, Integer>();
 	protected final Map<Integer, String> comments = new HashMap<Integer, String>();
 	protected final Set<Integer> forceExtract = new HashSet<>();
+	protected final Set<Integer> ignore = new HashSet<>();
 
 	/**
 	 * Parses a lua file from an input stream using {@link #DEFAULT_COMMENT_FORMAT} as the PO comment prefix.
@@ -57,7 +59,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @throws IOException
 	 */
 	public LuaFile(File file, String relativePath) throws IOException {
-		this(new FileInputStream(file), relativePath, DEFAULT_COMMENT_FORMAT, DEFAULT_FORCE_EXTRACT_FORMAT);
+		this(new FileInputStream(file), relativePath, DEFAULT_COMMENT_FORMAT, DEFAULT_FORCE_EXTRACT_FORMAT, DEFAULT_IGNORE_EXTRACT_FORMAT);
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @throws IOException
 	 */
 	public LuaFile(InputStream inputStream, String relativePath) throws IOException {
-		this(inputStream, relativePath, DEFAULT_COMMENT_FORMAT, DEFAULT_FORCE_EXTRACT_FORMAT);
+		this(inputStream, relativePath, DEFAULT_COMMENT_FORMAT, DEFAULT_FORCE_EXTRACT_FORMAT, DEFAULT_IGNORE_EXTRACT_FORMAT);
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @throws IOException
 	 */
 	public LuaFile(InputStream inputStream, String relativePath, String commentFormatPrefix) throws IOException {
-		this(inputStream, relativePath, commentFormatPrefix, DEFAULT_FORCE_EXTRACT_FORMAT);
+		this(inputStream, relativePath, commentFormatPrefix, DEFAULT_FORCE_EXTRACT_FORMAT, DEFAULT_IGNORE_EXTRACT_FORMAT);
 	}
 
 	/**
@@ -90,9 +92,11 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
 	 * @param commentFormatPrefix The custom comment prefix to parse
 	 * @param forceExtractFormat The custom comment prefix to force text extraction
+	 * @param ignoreFormat The custom comment prefix to ignore text extraction
 	 * @throws IOException
 	 */
-	public LuaFile(InputStream inputStream, String relativePath, String commentFormatPrefix, String forceExtractFormat) throws IOException {
+	public LuaFile(InputStream inputStream, String relativePath, String commentFormatPrefix,
+	               String forceExtractFormat, String ignoreFormat) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -110,6 +114,8 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 					comments.put(token.getLine(), comment.trim());
 				} else if(comment.startsWith(forceExtractFormat)) {
 					forceExtract.add(token.getLine());
+				} else if(comment.startsWith(ignoreFormat)) {
+					ignore.add(token.getLine());
 				}
 			}
 		}
@@ -136,6 +142,10 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 			}
 		}
 		tables.put(String.valueOf(lineNumber), tableFields);
+
+		if(ignore.contains(lineNumber - 1)) {
+			return;
+		}
 
 		if(comments.containsKey(lineNumber - 1)) {
 			if(forceExtract.contains(lineNumber - 2)) {
@@ -231,6 +241,9 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	 * @return if a {@link TranslationEntry} has been generated
 	 */
 	protected boolean generateTranslationEntry(int lineNumber, String variableName, String functionName, LuaParser.ArgsContext args) {
+		if(ignore.contains(lineNumber - 1)) {
+			return false;
+		}
 		if(!isGetTextFunction(lineNumber, functionName)) {
 			return false;
 		}
@@ -387,6 +400,9 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	}
 
 	private boolean isGetTextFunction(int lineNumber, String functionName) {
+		if(ignore.contains(lineNumber - 1)) {
+			return false;
+		}
 		if(forceExtract.contains(lineNumber - 1)) {
 			return true;
 		}else if(comments.containsKey(lineNumber - 1)) {

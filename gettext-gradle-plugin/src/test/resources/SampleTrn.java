@@ -40,5 +40,8 @@ public class HelloWorld  {
 
 		//#.Comment 2
 		System.out.println(GetText.trn(Locale.ENGLISH, STATIC_REF_MULTI_LINE, STATIC_REF_MULTI_LINE_PLURAL, 7, 90));
+
+		//#!ignore
+		System.out.println(GetText.tr(Locale.ENGLISH, "IGNORED"));
 	}
 }

@@ -49,6 +49,9 @@ class GeneratePotTask extends DefaultTask {
     @Input
     @Optional
     public String forceExtractFormat = "#!extract";
+    @Input
+    @Optional
+    public String ignoreFormat = "#!ignore";
     @OutputFile
     public File outputFile;
 
@@ -83,7 +86,7 @@ class GeneratePotTask extends DefaultTask {
     }
 
     private void generateTranslationEntries(File file, String relativePath, List<TranslationEntry> results) {
-        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, this.commentFormat, this.forceExtractFormat);
+        final SourceFile sourceFile = SourceFileParser.parse(file, relativePath, this.commentFormat, this.forceExtractFormat, this.ignoreFormat);
         sourceFile.getTranslationEntries(results);
         sourceFile.dispose();
     }

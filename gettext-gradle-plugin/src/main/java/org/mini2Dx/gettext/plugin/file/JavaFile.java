@@ -39,6 +39,7 @@ import java.util.*;
 public class JavaFile extends JavaBaseListener implements SourceFile {
 	public static final String DEFAULT_COMMENT_FORMAT = "#.";
 	public static final String DEFAULT_FORCE_EXTRACT_FORMAT = "#!extract";
+	public static final String DEFAULT_IGNORE_EXTRACT_FORMAT = "#!ignore";
 
 	protected final List<TranslationEntry> translationEntries = new ArrayList<TranslationEntry>();
 	protected final String relativePath;
@@ -51,6 +52,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	protected final Map<String, Integer> localVariablesByLineNumber = new HashMap<>();
 	protected final Map<Integer, String> comments = new HashMap<Integer, String>();
 	protected final Set<Integer> forceExtract = new HashSet<>();
+	protected final Set<Integer> ignore = new HashSet<>();
 
 	private ParseState parseState = ParseState.CLASS;
 	private boolean nextFieldIsStatic = true;
@@ -86,7 +88,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	 * @throws IOException
 	 */
 	public JavaFile(InputStream inputStream, String relativePath, String commentFormatPrefix) throws IOException {
-		this(inputStream, relativePath, commentFormatPrefix, DEFAULT_FORCE_EXTRACT_FORMAT);
+		this(inputStream, relativePath, commentFormatPrefix, DEFAULT_FORCE_EXTRACT_FORMAT, DEFAULT_IGNORE_EXTRACT_FORMAT);
 	}
 
 	/**
@@ -96,9 +98,11 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	 * @param relativePath The relative asset path for the file to use as the line reference in the PO translation entries
 	 * @param commentFormatPrefix The custom comment prefix to parse
 	 * @param forceExtractFormat The custom comment prefix to force text extraction
+	 * @param ignoreFormat The custom comment prefix to ignore text extraction
 	 * @throws IOException
 	 */
-	public JavaFile(InputStream inputStream, String relativePath, String commentFormatPrefix, String forceExtractFormat) throws IOException {
+	public JavaFile(InputStream inputStream, String relativePath, String commentFormatPrefix,
+	                String forceExtractFormat, String ignoreFormat) throws IOException {
 		super();
 		this.relativePath = relativePath;
 
@@ -117,6 +121,8 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 					comments.put(token.getLine(), comment);
 				} else if(comment.startsWith(forceExtractFormat)) {
 					forceExtract.add(token.getLine());
+				} else if(comment.startsWith(ignoreFormat)) {
+					ignore.add(token.getLine());
 				}
 			}
 		}
@@ -158,6 +164,10 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	@Override
 	public void exitVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
 		final int lineNumber = ctx.start.getLine();
+		if (ignore.contains(lineNumber - 1)) {
+			return;
+		}
+
 		String variableName;
 		String value;
 
@@ -209,6 +219,10 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	}
 
 	private void createForcedEntryForValue(int lineNumber, String value) {
+		if (ignore.contains(lineNumber - 1)) {
+			return;
+		}
+
 		final TranslationEntry additionalEntry = new TranslationEntry();
 		additionalEntry.setReference(relativePath + ":" + lineNumber);
 		additionalEntry.setId(value);
@@ -246,6 +260,9 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 	 * @return if a {@link TranslationEntry} has been generated
 	 */
 	protected boolean generateTranslationEntry(int lineNumber, String methodName, JavaParser.ArgumentListContext argListCtxt) {
+		if (ignore.contains(lineNumber - 1)) {
+			return false;
+		}
 		if(methodName == null) {
 			return false;
 		}
