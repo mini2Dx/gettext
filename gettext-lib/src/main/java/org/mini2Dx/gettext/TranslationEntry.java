@@ -36,15 +36,27 @@ public class TranslationEntry {
 
 	public void writeTo(PrintWriter printWriter) {
 		for(String comment : translatorComments) {
+			if(comment.length() == 0) {
+				continue;
+			}
 			printWriter.println("# " + trimComment(comment));
 		}
 		for(String comment : extractedComments) {
+			if(comment.length() == 0) {
+				continue;
+			}
 			printWriter.println("#. " + trimComment(comment));
 		}
 		for(String comment : flags) {
+			if(comment.length() == 0) {
+				continue;
+			}
 			printWriter.println("#, " + trimComment(comment));
 		}
 		for(String comment : mergeComments) {
+			if(comment.length() == 0) {
+				continue;
+			}
 			printWriter.println("#| " + trimComment(comment));
 		}
 		if(reference != null && !reference.isEmpty()) {
@@ -144,6 +156,9 @@ public class TranslationEntry {
 	}
 
 	private String trimComment(String str) {
+		if(str.length() == 0) {
+			return str;
+		}
 		if(str.charAt(0) == ' ') {
 			return str.substring(1);
 		}
