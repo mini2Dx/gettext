@@ -107,10 +107,11 @@ configure(mavenProjects()) {
     }
 
     publishing {
-        if (project.hasProperty('ossrhUser')) {
-            repositories {
-                maven {
-                    url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        repositories {
+            maven {
+                url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+                if (project.hasProperty('ossrhUser')) {
                     credentials {
                         username ossrhUser
                         password ossrhPassword
