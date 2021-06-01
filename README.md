@@ -28,6 +28,25 @@ __Maven__
 </dependency>
 ```
 
+### shaded jar
+
+There is a shaded jar available that contains the lib including shaded versions of its transitive dependencies. 
+Use this if you experience issues with having multiple versions of antlr on the classpath.
+
+__Gradle__
+```gradle
+implementation "org.mini2Dx:gettext-lib-all:1.9.2"
+```
+
+__Maven__
+```xml
+<dependency>
+    <groupId>org.mini2Dx</groupId>
+    <artifactId>gettext-lib-all</artifactId>
+    <version>1.9.2</version>
+</dependency>
+```
+
 ### Gradle Plugin
 
 The Gradle plugin can parse files and generate a .pot based on the source code.  

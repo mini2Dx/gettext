@@ -1,224 +1,264 @@
 buildscript {
     repositories {
-    	mavenLocal()
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
     }
 }
 
-if(project.hasProperty('ossrhUser') && project.hasProperty("release")) {
-	apply plugin: "io.codearte.nexus-staging"
+if (project.hasProperty('ossrhUser') && project.hasProperty("release")) {
+    apply plugin: "io.codearte.nexus-staging"
 
-	nexusStaging {
-		packageGroup = 'org.mini2Dx'
-		username = ossrhUser
-		password = ossrhPassword
-	}
+    nexusStaging {
+        packageGroup = 'org.mini2Dx'
+        username = ossrhUser
+        password = ossrhPassword
+    }
 }
 
 ext {
-	antlrVersion = '4.7.3'
-	
-	junitVersion="4.8.1"
-	jmockVersion="2.5.1"
+    antlrVersion = '4.7.3'
+
+    junitVersion = "4.8.1"
+    jmockVersion = "2.5.1"
 }
 
 subprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
-    
+
     tasks.eclipse.doLast {
-    		delete ".project"
-	}
-	
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-		maven { url 'https://maven.google.com' }
-	}
+        delete ".project"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://maven.google.com' }
+    }
 }
 
 def mavenProjects() {
-	subprojects.findAll { !it.name.contains('antlr') }
+    subprojects.findAll { !it.name.contains('antlr') }
 }
 
-def projectVersion = '1.9.1';
+def projectVersion = '1.9.2-SNAPSHOT';
 
 def docProjects() {
-	subprojects.findAll { !it.name.contains('gradle') && !it.name.contains('antlr') }
+    subprojects.findAll { !it.name.contains('gradle') && !it.name.contains('antlr') }
+}
+
+def commonPomConfig = {
+    pom ->
+        pom.with {
+            url = 'https://github.com/mini2Dx/gettext'
+
+            licenses {
+                license {
+                    name = 'Apache License 2.0'
+                    url = 'https://opensource.org/licenses/Apache-2.0'
+                }
+            }
+
+            developers {
+                developer {
+                    id = 'tomcashman'
+                    name = 'Thomas Cashman'
+                    email = 'thomascashman404@gmail.com'
+                }
+            }
+
+            scm {
+                connection = 'scm:git:https://github.com/mini2Dx/gettext.git'
+                developerConnection = 'scm:git:git@github.com:mini2Dx/gettext.git'
+                url = 'https://github.com/mini2Dx/gettext.git'
+            }
+        }
 }
 
 configure(mavenProjects()) {
-	apply plugin: "signing"
-	apply plugin: "maven"
-	apply plugin: "java"
-	
-	group = 'org.mini2Dx'
-	version = projectVersion
-	
-	apply plugin: "java"
-		
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
+    apply plugin: "signing"
+    apply plugin: "maven-publish"
+    apply plugin: "java"
 
-	compileJava.options.encoding = 'UTF-8'
-	compileTestJava.options.encoding = 'UTF-8'
-		
-	task sourcesJar(type: Jar) {
-		classifier = 'sources'
-		from sourceSets.main.allSource
-	}
-		
-	task javadocJar(type: Jar) {
-		classifier = 'javadoc'
-		from javadoc
-	}
+    group = 'org.mini2Dx'
+    version = projectVersion
 
-	tasks.withType(Test) {
-		systemProperty "file.encoding", "UTF-8"
-	}
-	
-	artifacts {
-		archives javadocJar, sourcesJar
-	}
-	
-	if(project.hasProperty('ossrhUser')) {
-		signing {
-			sign configurations.archives
-		}
-		
-		uploadArchives {
-			repositories {
-				mavenDeployer {
-					// POM signature
-					beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-					// Target repository
-					repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-						authentication(userName: ossrhUser, password: ossrhPassword)
-					}
-					pom.project {
-						name project.name
-						description project.description
-						packaging 'jar'
-						url 'https://github.com/mini2Dx/gettext'
-	
-						scm {
-							connection 'scm:git:https://github.com/mini2Dx/gettext.git'
-							developerConnection 'scm:git:git@github.com:mini2Dx/gettext.git'
-							url 'https://github.com/mini2Dx/gettext.git'
-						}
-	
-						licenses {
-							license {
-								name 'Apache License 2.0'
-								url 'https://opensource.org/licenses/Apache-2.0'
-								distribution 'repo'
-							}
-						}
-	
-						developers {
-							developer {
-								id = 'tomcashman'
-								name = 'Thomas Cashman'
-								email = 'thomascashman404@gmail.com'
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    tasks.withType(Test) {
+        systemProperty "file.encoding", "UTF-8"
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+                if (project.hasProperty('ossrhUser')) {
+                    credentials {
+                        username ossrhUser
+                        password ossrhPassword
+                    }
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                commonPomConfig pom
+            }
+        }
+    }
+
+    if (project.hasProperty('ossrhUser')) {
+        signing {
+            sign publishing.publications.mavenJava
+        }
+    }
 }
 
 project(":gettext-antlr") {
-	apply plugin: 'antlr'
+    apply plugin: 'antlr'
 
-	description = 'ANTLR4 grammar for GNU gettext'
-	
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
-	
-	dependencies {
-		antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
-	}
-	
-	generateGrammarSource {
-		arguments += ["-package", "org.mini2Dx.gettext.antlr"]
-	}
+    description = 'ANTLR4 grammar for GNU gettext'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    dependencies {
+        antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
+    }
+
+    generateGrammarSource {
+        arguments += ["-package", "org.mini2Dx.gettext.antlr"]
+    }
 }
 
 project(":gettext-lib") {
     description = 'Library for using GNU gettext'
-    
+
     task copyAntlrSourcesToProject(type: Copy, dependsOn: project(":gettext-antlr").compileJava) {
-		from "$projectDir/../gettext-antlr/build/generated-src/antlr/main/"
-		into "$projectDir/src/main/java/org/mini2Dx/gettext/antlr/"
-	}
-	
-	dependencies {
-		compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
-		
-		testCompile "junit:junit:$junitVersion"
-		testCompile "org.jmock:jmock-legacy:$jmockVersion"
-		testCompile "org.jmock:jmock-junit4:$jmockVersion"	
-	}
-	
-	compileJava.dependsOn copyAntlrSourcesToProject
+        from "$projectDir/../gettext-antlr/build/generated-src/antlr/main/"
+        into "$projectDir/src/main/java/org/mini2Dx/gettext/antlr/"
+    }
+
+    dependencies {
+        compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
+
+        testCompile "junit:junit:$junitVersion"
+        testCompile "org.jmock:jmock-legacy:$jmockVersion"
+        testCompile "org.jmock:jmock-junit4:$jmockVersion"
+    }
+
+    compileJava.dependsOn copyAntlrSourcesToProject
+}
+
+project(":gettext-lib-all") {
+
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    dependencies {
+        compile project(":gettext-lib")
+    }
+
+    shadowJar {
+        archiveClassifier.set('')
+        relocate 'org.antlr', 'mini2dx.shadow.org.antlr'
+        exclude 'META-INF/services/*'
+    }
+
+    publishing {
+        publications {
+            shadow(MavenPublication) { publication ->
+                project.shadow.component(publication)
+
+                commonPomConfig publication.pom
+            }
+        }
+    }
+
+    if (project.hasProperty('ossrhUser')) {
+        signing {
+            sign publishing.publications.shadow
+        }
+    }
+}
+
+
+project(":gettext-lib-all-example") {
+
+    dependencies {
+        implementation project(path: ":gettext-lib-all", configuration: "shadow")
+        testImplementation "junit:junit:$junitVersion"
+    }
+
+    publishMavenJavaPublicationToMavenRepository.enabled = false
+    publishToMavenLocal.enabled = false
+    publishMavenJavaPublicationToMavenLocal.enabled = false
+    publish.enabled = false
 }
 
 project(":gettext-xlsx") {
-	description = 'Library to convert .po files to/from xlsx'
+    description = 'Library to convert .po files to/from xlsx'
 
-	dependencies {
-		compile project(":gettext-lib")
-		compile "org.apache.poi:poi-ooxml:4.1.2"
+    dependencies {
+        compile project(":gettext-lib")
+        compile "org.apache.poi:poi-ooxml:4.1.2"
 
-		testCompile "junit:junit:$junitVersion"
-		testCompile "org.jmock:jmock-legacy:$jmockVersion"
-		testCompile "org.jmock:jmock-junit4:$jmockVersion"
-	}
+        testCompile "junit:junit:$junitVersion"
+        testCompile "org.jmock:jmock-legacy:$jmockVersion"
+        testCompile "org.jmock:jmock-junit4:$jmockVersion"
+    }
 
-	if(!project.version.contains("SNAPSHOT")) {
-		task docs(type: Javadoc) {
-			failOnError = false
-			title = 'gettext'
-			source docProjects().collect {p -> p.sourceSets.main.allJava }
-			classpath = files(docProjects().collect {p -> p.sourceSets.main.compileClasspath})
-			destinationDir = rootProject.file("docs/javadoc/${projectVersion}")
-		}
-	}
+    if (!project.version.contains("SNAPSHOT")) {
+        task docs(type: Javadoc) {
+            failOnError = false
+            title = 'gettext'
+            source docProjects().collect { p -> p.sourceSets.main.allJava }
+            classpath = files(docProjects().collect { p -> p.sourceSets.main.compileClasspath })
+            destinationDir = rootProject.file("docs/javadoc/${projectVersion}")
+        }
+    }
 }
 
 project(":gettext-gradle-plugin") {
-	apply plugin: 'groovy'
-	apply plugin: 'antlr'
+    apply plugin: 'groovy'
+    apply plugin: 'antlr'
 
-	description = 'Gradle plugin for generating .pot files from source files'
+    description = 'Gradle plugin for generating .pot files from source files'
 
-	dependencies {
-		compile gradleApi()
-		compile localGroovy()
+    dependencies {
+        compile gradleApi()
+        compile localGroovy()
 
-		compile project(":gettext-lib")
-		compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
+        compile project(":gettext-lib")
+        compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
 
-		antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
-		
-		testCompile "junit:junit:$junitVersion"
-		testCompile gradleTestKit()
-	}
+        antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
 
-	generateGrammarSource {
-		arguments += ["-package", "org.mini2Dx.gettext.plugin.antlr"]
-	}
-}
+        testCompile "junit:junit:$junitVersion"
+        testCompile gradleTestKit()
+    }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.10.3'
+    generateGrammarSource {
+        arguments += ["-package", "org.mini2Dx.gettext.plugin.antlr"]
+    }
 }
