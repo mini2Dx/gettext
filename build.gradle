@@ -49,7 +49,7 @@ def mavenProjects() {
     subprojects.findAll { !it.name.contains('antlr') }
 }
 
-def projectVersion = '1.9.2';
+def projectVersion = '1.9.2-SNAPSHOT';
 
 def docProjects() {
     subprojects.findAll { !it.name.contains('gradle') && !it.name.contains('antlr') }
@@ -181,6 +181,7 @@ project(":gettext-lib-all") {
     shadowJar {
         archiveClassifier.set('')
         relocate 'org.antlr', 'mini2dx.shadow.org.antlr'
+        exclude 'META-INF/services/*'
     }
 
     publishing {
@@ -208,15 +209,10 @@ project(":gettext-lib-all-example") {
         testImplementation "junit:junit:$junitVersion"
     }
 
-    publishToMavenLocal {
-        enabled = false
-    }
-    publishMavenJavaPublicationToMavenLocal {
-        enabled = false
-    }
-    publish {
-        enabled = false
-    }
+    publishMavenJavaPublicationToMavenRepository.enabled = false
+    publishToMavenLocal.enabled = false
+    publishMavenJavaPublicationToMavenLocal.enabled = false
+    publish.enabled = false
 }
 
 project(":gettext-xlsx") {
