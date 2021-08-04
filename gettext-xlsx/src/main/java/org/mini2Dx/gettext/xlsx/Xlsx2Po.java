@@ -65,7 +65,7 @@ public class Xlsx2Po {
 				if(!directory.exists()) {
 					directory.mkdirs();
 				}
-				outputFiles.put(locale, new File(directory, sheet.getSheetName().replace(".pot", ".po")));
+				outputFiles.put(locale, new File(directory, xlsxFile.getName().replace(".pot", ".po").replace(".xlsx", ".po")));
 				poFiles.put(locale, new PoFile(locale));
 				localeIndices.put(columnIndex, locale);
 			}
@@ -115,6 +115,13 @@ public class Xlsx2Po {
 		if(row.getCell(columnIndex) == null) {
 			return "";
 		}
-		return row.getCell(columnIndex).getStringCellValue().trim();
+		try {
+			return row.getCell(columnIndex).getStringCellValue().trim();
+		} catch (IllegalStateException e) {
+			if(e.getMessage().contains("Cannot get a STRING value from a NUMERIC cell")) {
+				return String.valueOf(row.getCell(columnIndex).getNumericCellValue());
+			}
+			throw e;
+		}
 	}
 }

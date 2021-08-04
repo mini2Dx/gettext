@@ -1,3 +1,7 @@
+[1.9.2]
+- Fix Xlsx2Po outputting incorrect filenames
+- Fix exception in Xlsx2Po when cell is in numeric format
+
 [1.9.1]
 - Fix PoFile not reading UTF8 characters correctly depending on constructor used
 - TranslationEntry no longer outputs empty comments
