@@ -1,3 +1,6 @@
+[1.9.3]
+- Fix Xlsx2Po trimming content
+
 [1.9.2]
 - Fix Xlsx2Po outputting incorrect filenames
 - Fix exception in Xlsx2Po when cell is in numeric format

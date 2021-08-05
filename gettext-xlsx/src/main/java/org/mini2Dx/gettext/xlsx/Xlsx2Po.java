@@ -116,7 +116,7 @@ public class Xlsx2Po {
 			return "";
 		}
 		try {
-			return row.getCell(columnIndex).getStringCellValue().trim();
+			return row.getCell(columnIndex).getStringCellValue();
 		} catch (IllegalStateException e) {
 			if(e.getMessage().contains("Cannot get a STRING value from a NUMERIC cell")) {
 				return String.valueOf(row.getCell(columnIndex).getNumericCellValue());
