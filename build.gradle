@@ -48,7 +48,7 @@ def mavenProjects() {
 	subprojects.findAll { !it.name.contains('antlr') }
 }
 
-def projectVersion = '1.9.2';
+def projectVersion = '1.9.3';
 
 def docProjects() {
 	subprojects.findAll { !it.name.contains('gradle') && !it.name.contains('antlr') }
