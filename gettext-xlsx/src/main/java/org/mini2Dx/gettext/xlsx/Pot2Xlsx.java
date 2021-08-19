@@ -68,12 +68,31 @@ public class Pot2Xlsx {
 
 	public static void convertMultipleFiles(final Locale sourceLocale, final File xlsxFile, final File... poFiles) throws IOException {
 		final XSSFWorkbook workbook = new XSSFWorkbook();
+		final Sheet sheet = workbook.createSheet("strings");
 
+		final XSSFFont font = workbook.createFont();
+		font.setColor(IndexedColors.WHITE.getIndex());
+		font.setBold(true);
+
+		final XSSFCellStyle style = workbook.createCellStyle();
+		style.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setFont(font);
+
+		final Row headerRow = sheet.createRow(0);
+		setCell(headerRow, 0, "Reference", style);
+		setCell(headerRow, 1, "Context", style);
+		setCell(headerRow, 2, "Extracted Comments", style);
+		setCell(headerRow, 3, sourceLocale.getDisplayName() + " (singular)", style);
+		setCell(headerRow, 4, sourceLocale.getDisplayName() + " (plural)", style);
+		sheet.createFreezePane( 0, 1, 0, 1 );
+
+		int rowIndex = 1;
 		for(File poFile : poFiles) {
 			final PoFile poFile1 = new PoFile(sourceLocale, poFile);
-			convertFile(sourceLocale, workbook, poFile.getName(), poFile1);
+			rowIndex = writeToSheet(sourceLocale, workbook, poFile1, sheet, rowIndex);
 		}
-		
+
 		try (OutputStream outputStream = new FileOutputStream(xlsxFile)) {
 			workbook.write(outputStream);
 		}
@@ -99,7 +118,10 @@ public class Pot2Xlsx {
 		setCell(headerRow, 4, sourceLocale.getDisplayName() + " (plural)", style);
 		sheet.createFreezePane( 0, 1, 0, 1 );
 
-		int rowIndex = 1;
+		writeToSheet(sourceLocale, workbook, poFile, sheet, 1);
+	}
+
+	private static int writeToSheet(Locale sourceLocale, XSSFWorkbook workbook, PoFile poFile, Sheet sheet, int rowIndex) {
 		for(TranslationEntry translationEntry : poFile.getEntries()) {
 			final Row row = sheet.createRow(rowIndex);
 			setCell(row, 0, translationEntry.getReference());
@@ -116,6 +138,7 @@ public class Pot2Xlsx {
 			setCell(row, 4, translationEntry.getIdPlural());
 			rowIndex++;
 		}
+		return rowIndex;
 	}
 
 	private static void setCell(Row row, int cellIndex, String value, XSSFCellStyle style) {
