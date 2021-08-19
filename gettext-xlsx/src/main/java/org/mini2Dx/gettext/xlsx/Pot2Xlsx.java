@@ -66,6 +66,19 @@ public class Pot2Xlsx {
 		}
 	}
 
+	public static void convertMultipleFiles(final Locale sourceLocale, final File xlsxFile, final File... poFiles) throws IOException {
+		final XSSFWorkbook workbook = new XSSFWorkbook();
+
+		for(File poFile : poFiles) {
+			final PoFile poFile1 = new PoFile(sourceLocale, poFile);
+			convertFile(sourceLocale, workbook, poFile.getName(), poFile1);
+		}
+		
+		try (OutputStream outputStream = new FileOutputStream(xlsxFile)) {
+			workbook.write(outputStream);
+		}
+	}
+
 	private static void convertFile(final Locale sourceLocale, final XSSFWorkbook workbook, final String relativeFilePath, final PoFile poFile) throws IOException {
 		final Sheet sheet = workbook.createSheet(relativeFilePath);
 
