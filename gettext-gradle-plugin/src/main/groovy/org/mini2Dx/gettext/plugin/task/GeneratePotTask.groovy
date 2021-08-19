@@ -36,7 +36,11 @@ class GeneratePotTask extends DefaultTask {
     @InputDirectory
     public String srcDir;
     @Input
+    @Optional
     public String include;
+    @Input
+    @Optional
+    public String[] includes;
     @Input
     @Optional
     public String exclude;
@@ -58,7 +62,15 @@ class GeneratePotTask extends DefaultTask {
     @TaskAction
     public void run() throws IOException {
         final FileTree sourceFiles = project.fileTree(this.srcDir) {
-            include this.include;
+            if(this.includes != null) {
+                for (String includePath : this.includes) {
+                    include includePath;
+                }
+            }
+
+            if(this.include != null) {
+                include this.include;
+            }
 
             if(this.excludes != null) {
                 for (String excludePath : this.excludes) {

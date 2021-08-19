@@ -19,6 +19,7 @@ public class GetTextSource {
 	private final String name;
 	public String srcDir;
 	public String include;
+	public String[] includes;
 	public String exclude;
 	public String[] excludes;
 	public String commentFormat = "#.";

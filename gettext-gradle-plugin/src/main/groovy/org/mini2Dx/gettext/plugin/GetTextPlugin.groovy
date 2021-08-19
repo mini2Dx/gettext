@@ -43,6 +43,7 @@ class GetTextPlugin implements Plugin<Project> {
                     public void execute(GeneratePotTask task) {
                         task.srcDir = getTextSource.srcDir;
                         task.include = getTextSource.include;
+                        task.includes = getTextSource.includes;
                         task.exclude = getTextSource.exclude;
                         task.excludes = getTextSource.excludes;
                         task.commentFormat = getTextSource.commentFormat;
