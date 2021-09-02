@@ -15,8 +15,10 @@
  ******************************************************************************/
 package org.mini2Dx.gettext;
 
+import java.util.regex.Matcher;
+
 public class Utils {
 	public static String escapeDoubleQuotes(String str) {
-		return str.replace("\"", "\\\"");
+		return str.replaceAll("(?<!\\\\)\"",Matcher.quoteReplacement("\\\""));
 	}
 }
