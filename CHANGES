@@ -1,5 +1,10 @@
-[1.9.4]
+[1.10.1]
 - Fix PoFile.saveTo adding additional double quotes to strings
+
+[1.10.0]
+- Allow multiple includes in GetTextPlugin
+- Add method to Pot2Xlsx to convert multiple pot files into single Excel
+- Update Pot2Xlsx.convertMultipleFiles to amend to single sheet
 
 [1.9.3]
 - Fix Xlsx2Po trimming content
