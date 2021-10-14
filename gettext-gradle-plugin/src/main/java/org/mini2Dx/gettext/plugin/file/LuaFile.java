@@ -182,7 +182,7 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 				String value = ctx.explist().exp(i).getText();
 				if(variables.containsKey(value)) {
 					value = variables.get(value);
-				} else if(value.startsWith("\"") && value.startsWith("\"")) {
+				} else if(value.startsWith("\"") && value.endsWith("\"")) {
 					value = value.substring(1, value.length() - 1);
 					value = value.replace("\"..\"", "");
 				}
@@ -365,23 +365,34 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 	}
 
 	protected String getArgument(int lineNumber, LuaParser.ArgsContext argsContext, int index) {
-		if(argsContext.explist() == null) {
+		return getArgument(lineNumber, argsContext, index, true);
+	}
+
+	protected String getArgument(int lineNumber, LuaParser.ArgsContext argsContext, int index, boolean trimQuotes) {
+		if (argsContext.explist() == null) {
 			return "";
 		}
-		if(argsContext.explist().exp() == null) {
+		if (argsContext.explist().exp() == null) {
 			return "";
 		}
-		if(index < 0) {
+		if (index < 0) {
 			return "";
-		} else if(index >= argsContext.explist().exp().size()) {
+		} else if (index >= argsContext.explist().exp().size()) {
 			return "";
 		}
 		final LuaParser.ExpContext expContext = argsContext.explist().exp(index);
 		final String value = expContext.getText().trim();
-		if(variables.containsKey(value)) {
+		if (variables.containsKey(value)) {
 			return variables.get(value);
-		} else if(value.startsWith("\"") && value.startsWith("\"")) {
-			return value.substring(1, value.length() - 1).replace("\"..\"", "");
+		} else if (value.startsWith("\"") && value.endsWith("\"")) {
+			if (trimQuotes) {
+				return value.substring(1, value.length() - 1).replace("\"..\"", "");
+			} else {
+				return value;
+			}
+		} else if(value.contains("..")) {
+			//String concat
+			return value;
 		} else {
 			throw new RuntimeException("Could not determine variable value for " + value + " on line " + lineNumber);
 		}

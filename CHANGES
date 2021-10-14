@@ -1,3 +1,6 @@
+[1.10.2]
+- Fix end quote detection in Lua extraction
+
 [1.10.1]
 - Fix PoFile.saveTo adding additional double quotes to strings
 
