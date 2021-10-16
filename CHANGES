@@ -1,3 +1,6 @@
+[1.10.3]
+- Handle variable re-assignments in Lua extraction
+
 [1.10.2]
 - Fix end quote detection in Lua extraction
 
