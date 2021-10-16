@@ -173,24 +173,35 @@ public class LuaFile extends LuaBaseListener implements SourceFile {
 
 	@Override
 	public void exitStat(LuaParser.StatContext ctx) {
-		if(ctx.namelist() != null && ctx.explist() != null) {
-			final List<String> variableNames = new ArrayList<String>();
-			for(int i = 0; i < ctx.namelist().NAME().size(); i++) {
+		final List<String> variableNames;
+		if (ctx.namelist() != null && ctx.explist() != null) {
+			variableNames = new ArrayList<String>();
+			for (int i = 0; i < ctx.namelist().NAME().size(); i++) {
 				variableNames.add(ctx.namelist().NAME().get(i).getText());
 			}
-			for(int i = 0; i < ctx.explist().exp().size(); i++) {
-				String value = ctx.explist().exp(i).getText();
-				if(variables.containsKey(value)) {
-					value = variables.get(value);
-				} else if(value.startsWith("\"") && value.endsWith("\"")) {
-					value = value.substring(1, value.length() - 1);
-					value = value.replace("\"..\"", "");
-				}
+			storeVariables(variableNames, ctx);
+		} else if(ctx.varlist() != null && ctx.explist() != null) {
+			variableNames = new ArrayList<String>();
+			for (int i = 0; i < ctx.varlist().var().size(); i++) {
+				variableNames.add(ctx.varlist().var(i).NAME().getText());
+			}
+			storeVariables(variableNames, ctx);
+		}
+	}
 
-				for(String variableName : variableNames) {
-					variables.put(variableName, value);
-					variableByLineNumber.put(variableName, ctx.start.getLine());
-				}
+	protected void storeVariables(final List<String> variableNames, LuaParser.StatContext ctx) {
+		for (int i = 0; i < ctx.explist().exp().size(); i++) {
+			String value = ctx.explist().exp(i).getText();
+			if (variables.containsKey(value)) {
+				value = variables.get(value);
+			} else if (value.startsWith("\"") && value.endsWith("\"")) {
+				value = value.substring(1, value.length() - 1);
+				value = value.replace("\"..\"", "");
+			}
+
+			for (String variableName : variableNames) {
+				variables.put(variableName, value);
+				variableByLineNumber.put(variableName, ctx.start.getLine());
 			}
 		}
 	}
