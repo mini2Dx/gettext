@@ -280,43 +280,43 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		switch(functionType) {
 		case TR:
 		case TR_WITH_VALUES:
-			translationEntry.setId(getArgument(argListCtxt, 0));
+			translationEntry.setId(getArgument(argListCtxt, 0, lineNumber));
 			break;
 		case TR_WITH_LOCALE:
 		case TR_WITH_LOCALE_AND_VALUES:
-			translationEntry.setId(getArgument(argListCtxt, 1));
+			translationEntry.setId(getArgument(argListCtxt, 1, lineNumber));
 			break;
 		case TRC:
 		case TRC_WITH_VALUES:
-			translationEntry.setContext(getArgument(argListCtxt, 0));
-			translationEntry.setId(getArgument(argListCtxt, 1));
+			translationEntry.setContext(getArgument(argListCtxt, 0, lineNumber));
+			translationEntry.setId(getArgument(argListCtxt, 1, lineNumber));
 			break;
 		case TRC_WITH_LOCALE:
 		case TRC_WITH_LOCALE_AND_VALUES:
-			translationEntry.setContext(getArgument(argListCtxt, 1));
-			translationEntry.setId(getArgument(argListCtxt, 2));
+			translationEntry.setContext(getArgument(argListCtxt, 1, lineNumber));
+			translationEntry.setId(getArgument(argListCtxt, 2, lineNumber));
 			break;
 		case TRN:
 		case TRN_WITH_VALUES:
-			translationEntry.setId(getArgument(argListCtxt, 0));
-			translationEntry.setIdPlural(getArgument(argListCtxt, 1));
+			translationEntry.setId(getArgument(argListCtxt, 0, lineNumber));
+			translationEntry.setIdPlural(getArgument(argListCtxt, 1, lineNumber));
 			break;
 		case TRN_WITH_LOCALE:
 		case TRN_WITH_LOCALE_AND_VALUES:
-			translationEntry.setId(getArgument(argListCtxt, 1));
-			translationEntry.setIdPlural(getArgument(argListCtxt, 2));
+			translationEntry.setId(getArgument(argListCtxt, 1, lineNumber));
+			translationEntry.setIdPlural(getArgument(argListCtxt, 2, lineNumber));
 			break;
 		case TRNC:
 		case TRNC_WITH_VALUES:
-			translationEntry.setContext(getArgument(argListCtxt, 0));
-			translationEntry.setId(getArgument(argListCtxt, 1));
-			translationEntry.setIdPlural(getArgument(argListCtxt, 2));
+			translationEntry.setContext(getArgument(argListCtxt, 0, lineNumber));
+			translationEntry.setId(getArgument(argListCtxt, 1, lineNumber));
+			translationEntry.setIdPlural(getArgument(argListCtxt, 2, lineNumber));
 			break;
 		case TRNC_WITH_LOCALE:
 		case TRNC_WITH_LOCALE_AND_VALUES:
-			translationEntry.setContext(getArgument(argListCtxt, 1));
-			translationEntry.setId(getArgument(argListCtxt, 2));
-			translationEntry.setIdPlural(getArgument(argListCtxt, 3));
+			translationEntry.setContext(getArgument(argListCtxt, 1, lineNumber));
+			translationEntry.setId(getArgument(argListCtxt, 2, lineNumber));
+			translationEntry.setIdPlural(getArgument(argListCtxt, 3, lineNumber));
 			break;
 		case FORCE_EXTRACT:
 			boolean initialEntryDone = false;
@@ -357,7 +357,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 					}
 				}
 
-				final String argument = getArgument(argListCtxt, i);
+				final String argument = getArgument(argListCtxt, i, lineNumber);
 				if(argument == null || argument.isEmpty()) {
 					continue;
 				}
@@ -384,7 +384,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		return true;
 	}
 
-	protected String getArgument(JavaParser.ArgumentListContext argumentListContext, int index) {
+	protected String getArgument(JavaParser.ArgumentListContext argumentListContext, int index, int lineNumber) {
 		if(index < 0) {
 			return "";
 		} else if(index >= argumentListContext.expression().size()) {
@@ -406,7 +406,7 @@ public class JavaFile extends JavaBaseListener implements SourceFile {
 		} else if(value.startsWith("\"") && value.endsWith("\"")) {
 			return value.substring(1, value.length() - 1).replace("\"+\"", "");
 		} else {
-			throw new RuntimeException("Could not determine variable value for " + value);
+			throw new RuntimeException("Could not determine variable value for " + value + " on line " + lineNumber);
 		}
 	}
 
