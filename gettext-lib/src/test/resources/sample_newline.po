@@ -1,0 +1,5 @@
+#  translator-comments
+#. extracted-comments
+#: src/msgcmp.java:322
+msgid "Unknown\nerror"
+msgstr "Unknown\nerror"

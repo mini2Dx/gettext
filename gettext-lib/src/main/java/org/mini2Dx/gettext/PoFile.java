@@ -105,6 +105,30 @@ public class PoFile extends GetTextBaseListener {
 		printWriter.close();
 	}
 
+	public void saveToBin(File file) throws IOException {
+		final DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(file));
+		outputStream.writeInt(entries.size());
+		for(TranslationEntry translationEntry : entries) {
+			translationEntry.writeTo(outputStream);
+		}
+		outputStream.flush();
+		outputStream.close();
+	}
+
+	public static PoFile readFromBin(Locale locale, InputStream inputStream) throws IOException {
+		final DataInputStream dataInputStream = new DataInputStream(inputStream);
+		final int totalEntries = dataInputStream.readInt();
+
+		final PoFile poFile = new PoFile(locale);
+		for(int i = 0; i < totalEntries; i++) {
+			final TranslationEntry translationEntry = new TranslationEntry();
+			translationEntry.readFrom(dataInputStream);
+			poFile.entries.add(translationEntry);
+		}
+		dataInputStream.close();
+		return poFile;
+	}
+
 	@Override
 	public void enterEntry(GetTextParser.EntryContext ctx) {
 		currentEntry = new TranslationEntry();

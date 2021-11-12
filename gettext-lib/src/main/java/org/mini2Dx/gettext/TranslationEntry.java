@@ -15,6 +15,9 @@
  ******************************************************************************/
 package org.mini2Dx.gettext;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +94,116 @@ public class TranslationEntry {
 			printWriter.println("msgid_plural \"" + Utils.escapeDoubleQuotes(idPlural) + "\"");
 		} else {
 			printWriter.println("msgstr \"" + Utils.escapeDoubleQuotes(strings.get(0)) + "\"");
+		}
+	}
+
+	public void writeTo(DataOutputStream outputStream) throws IOException {
+		outputStream.writeInt(translatorComments.size());
+		for(String comment : translatorComments) {
+			outputStream.writeUTF(comment);
+		}
+
+		outputStream.writeInt(extractedComments.size());
+		for(String comment : extractedComments) {
+			outputStream.writeUTF(comment);
+		}
+
+		outputStream.writeInt(flags.size());
+		for(String comment : flags) {
+			outputStream.writeUTF(comment);
+		}
+
+		outputStream.writeInt(mergeComments.size());
+		for(String comment : mergeComments) {
+			outputStream.writeUTF(comment);
+		}
+
+		if(reference == null) {
+			outputStream.writeUTF("");
+		} else {
+			outputStream.writeUTF(reference);
+		}
+		if(context == null) {
+			outputStream.writeUTF("");
+		} else {
+			outputStream.writeUTF(context);
+		}
+		if(id == null) {
+			outputStream.writeUTF("");
+		} else {
+			outputStream.writeUTF(id);
+		}
+		if(idPlural == null) {
+			outputStream.writeUTF("");
+		} else {
+			outputStream.writeUTF(idPlural);
+		}
+
+		if(strings.isEmpty()) {
+			if(idPlural != null && !idPlural.isEmpty()) {
+				outputStream.writeInt(3);
+				outputStream.writeUTF("");
+				outputStream.writeUTF("");
+				outputStream.writeUTF("");
+			} else {
+				outputStream.writeInt(1);
+				outputStream.writeUTF("");
+			}
+		} else if(strings.size() > 1) {
+			outputStream.writeInt(strings.size());
+			for(int i = 0; i < strings.size(); i++) {
+				final String str = strings.get(i);
+				if(str == null) {
+					outputStream.writeUTF("");
+				} else {
+					outputStream.writeUTF(str);
+				}
+			}
+		} else {
+			outputStream.writeInt(1);
+			outputStream.writeUTF(strings.get(0));
+		}
+	}
+
+	public void readFrom(DataInputStream inputStream) throws IOException {
+		final int totalTranslatorComments = inputStream.readInt();
+		for(int i = 0; i < totalTranslatorComments; i++) {
+			translatorComments.add(inputStream.readUTF());
+		}
+
+		final int totalExtractedComments = inputStream.readInt();
+		for(int i = 0; i < totalExtractedComments; i++) {
+			extractedComments.add(inputStream.readUTF());
+		}
+
+		final int totalFlags = inputStream.readInt();
+		for(int i = 0; i < totalFlags; i++) {
+			flags.add(inputStream.readUTF());
+		}
+
+		final int totalMergeComments = inputStream.readInt();
+		for(int i = 0; i < totalMergeComments; i++) {
+			mergeComments.add(inputStream.readUTF());
+		}
+
+		reference = inputStream.readUTF();
+		context = inputStream.readUTF();
+		id = inputStream.readUTF();
+		idPlural = inputStream.readUTF();
+
+		if(reference.isEmpty()) {
+			reference = null;
+		}
+		if(context.isEmpty()) {
+			context = null;
+		}
+		if(idPlural.isEmpty()) {
+			idPlural = null;
+		}
+
+		final int totalStrings = inputStream.readInt();
+		for(int i = 0; i < totalStrings; i++) {
+			strings.add(inputStream.readUTF());
 		}
 	}
 
