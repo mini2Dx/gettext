@@ -1,3 +1,6 @@
+[1.10.4]
+- Implement optional binary format for PoFiles
+
 [1.10.3]
 - Handle variable re-assignments in Lua extraction
 
