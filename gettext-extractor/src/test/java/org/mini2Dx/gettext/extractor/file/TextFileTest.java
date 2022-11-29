@@ -1,4 +1,4 @@
-package org.mini2Dx.gettext.plugin.file;
+package org.mini2Dx.gettext.extractor.file;
 
 import org.junit.Assert;
 import org.junit.Test;

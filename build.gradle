@@ -195,6 +195,31 @@ project(":gettext-xlsx") {
 	}
 }
 
+project(":gettext-extractor") {
+	apply plugin: 'antlr'
+	apply plugin: 'application' 
+
+	description = "Extracts .pot files from source files"
+
+	application {
+		mainClassName = 'org.mini2Dx.gettext.extractor.Main'
+	}
+
+	dependencies {
+		compile project(":gettext-lib")
+		compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
+
+		antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
+
+		testCompile "junit:junit:$junitVersion"
+		testCompile gradleTestKit()
+	}
+
+	generateGrammarSource {
+		arguments += ["-package", "org.mini2Dx.gettext.extractor.antlr"]
+	}
+}
+
 project(":gettext-gradle-plugin") {
 	apply plugin: 'groovy'
 	apply plugin: 'antlr'
@@ -206,16 +231,7 @@ project(":gettext-gradle-plugin") {
 		compile localGroovy()
 
 		compile project(":gettext-lib")
-		compile "com.tunnelvisionlabs:antlr4-runtime:$antlrVersion"
-
-		antlr "com.tunnelvisionlabs:antlr4:$antlrVersion"
-		
-		testCompile "junit:junit:$junitVersion"
-		testCompile gradleTestKit()
-	}
-
-	generateGrammarSource {
-		arguments += ["-package", "org.mini2Dx.gettext.plugin.antlr"]
+		compile project(":gettext-extractor")
 	}
 }
 

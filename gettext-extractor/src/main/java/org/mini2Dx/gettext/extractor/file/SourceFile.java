@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext.plugin;
+package org.mini2Dx.gettext.extractor.file;
 
-public enum GetTextFunctionType {
-	TR,
-	TR_WITH_VALUES,
-	TR_WITH_LOCALE,
-	TR_WITH_LOCALE_AND_VALUES,
-	TRC,
-	TRC_WITH_VALUES,
-	TRC_WITH_LOCALE,
-	TRC_WITH_LOCALE_AND_VALUES,
-	TRN,
-	TRN_WITH_VALUES,
-	TRN_WITH_LOCALE,
-	TRN_WITH_LOCALE_AND_VALUES,
-	TRNC,
-	TRNC_WITH_VALUES,
-	TRNC_WITH_LOCALE,
-	TRNC_WITH_LOCALE_AND_VALUES,
-	FORCE_EXTRACT
+import org.mini2Dx.gettext.TranslationEntry;
+
+import java.io.File;
+import java.util.List;
+
+public interface SourceFile {
+
+	public void getTranslationEntries(List<TranslationEntry> result);
+
+	public void dispose();
 }
