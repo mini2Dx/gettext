@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext.plugin.file;
+package org.mini2Dx.gettext.extractor.file;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -25,10 +25,10 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.TranslationEntry;
-import org.mini2Dx.gettext.plugin.GetTextFunctionType;
-import org.mini2Dx.gettext.plugin.antlr.LuaBaseListener;
-import org.mini2Dx.gettext.plugin.antlr.LuaLexer;
-import org.mini2Dx.gettext.plugin.antlr.LuaParser;
+import org.mini2Dx.gettext.extractor.GetTextFunctionType;
+import org.mini2Dx.gettext.extractor.antlr.LuaBaseListener;
+import org.mini2Dx.gettext.extractor.antlr.LuaLexer;
+import org.mini2Dx.gettext.extractor.antlr.LuaParser;
 
 import java.io.File;
 import java.io.FileInputStream;

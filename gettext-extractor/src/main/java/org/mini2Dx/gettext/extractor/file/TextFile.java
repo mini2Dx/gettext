@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext.plugin.file;
+package org.mini2Dx.gettext.extractor.file;
 
 import org.mini2Dx.gettext.TranslationEntry;
 import org.mini2Dx.gettext.Utils;

@@ -26,8 +26,8 @@ import org.gradle.api.tasks.TaskAction
 import org.mini2Dx.gettext.PoFile
 import org.mini2Dx.gettext.TranslationEntry
 import org.mini2Dx.gettext.plugin.GetTextSource
-import org.mini2Dx.gettext.plugin.file.SourceFile
-import org.mini2Dx.gettext.plugin.file.SourceFileParser
+import org.mini2Dx.gettext.extractor.file.SourceFile
+import org.mini2Dx.gettext.extractor.file.SourceFileParser
 
 class GeneratePotTask extends DefaultTask {
     public static final String DEFAULT_COMMENT_FORMAT = "#.";

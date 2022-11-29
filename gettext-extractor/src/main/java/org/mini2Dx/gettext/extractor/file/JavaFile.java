@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.mini2Dx.gettext.plugin.file;
+package org.mini2Dx.gettext.extractor.file;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -21,14 +21,14 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.gradle.internal.impldep.org.mozilla.javascript.ast.ConditionalExpression;
+// import org.gradle.internal.impldep.org.mozilla.javascript.ast.ConditionalExpression;
 import org.mini2Dx.gettext.TranslationEntry;
 import org.mini2Dx.gettext.antlr.GetTextLexer;
 import org.mini2Dx.gettext.antlr.GetTextParser;
-import org.mini2Dx.gettext.plugin.GetTextFunctionType;
-import org.mini2Dx.gettext.plugin.antlr.JavaBaseListener;
-import org.mini2Dx.gettext.plugin.antlr.JavaLexer;
-import org.mini2Dx.gettext.plugin.antlr.JavaParser;
+import org.mini2Dx.gettext.extractor.GetTextFunctionType;
+import org.mini2Dx.gettext.extractor.antlr.JavaBaseListener;
+import org.mini2Dx.gettext.extractor.antlr.JavaLexer;
+import org.mini2Dx.gettext.extractor.antlr.JavaParser;
 
 import java.io.File;
 import java.io.FileInputStream;
