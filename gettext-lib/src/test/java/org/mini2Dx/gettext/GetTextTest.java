@@ -29,22 +29,31 @@ import java.util.Locale;
 public class GetTextTest {
 	private static final Locale CATALAN = Locale.forLanguageTag("ca-ES");
 
-	private static PoFile EN_FILE, CA_FILE, JP_FILE;
+	private static PoFile EN_FILE, CA_FILE, JP_FILE, EMPTY_FILE;
 
 	@BeforeClass
 	public static void setUp() throws IOException  {
 		EN_FILE = new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_en.po"));
 		CA_FILE = new PoFile(CATALAN, GetTextTest.class.getResourceAsStream("/sample_ca.po"));
 		JP_FILE = new PoFile(Locale.JAPAN, GetTextTest.class.getResourceAsStream("/sample_jp.po"));
+		EMPTY_FILE = new PoFile(Locale.ROOT, GetTextTest.class.getResourceAsStream("/sample_empty.po"));
 
 		GetText.add(EN_FILE);
 		GetText.add(CA_FILE);
 		GetText.add(JP_FILE);
+		GetText.add(EMPTY_FILE);
 	}
 
 	@Test(expected = ParseCancellationException.class)
 	public void testExceptionOnParseFailure() throws IOException {
 		new PoFile(Locale.ENGLISH, GetTextTest.class.getResourceAsStream("/sample_error.po"));
+	}
+
+	@Test
+	public void testEmptyTranslation() {
+		GetText.setLocale(Locale.ROOT);
+		final String id1 = "Translation is empty";
+		Assert.assertEquals(id1, GetText.tr(id1));
 	}
 
 	@Test

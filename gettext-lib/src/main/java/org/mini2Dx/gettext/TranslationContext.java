@@ -39,10 +39,17 @@ public class TranslationContext {
 		if(entry.getStrings().isEmpty()) {
 			return sourceText;
 		}
+
+		final String result;
 		if(n >= entry.getStrings().size()) {
-			return entry.getStrings().get(entry.getStrings().size() - 1);
+			result = entry.getStrings().get(entry.getStrings().size() - 1);
+		} else {
+			result = entry.getStrings().get(n);
 		}
-		return entry.getStrings().get(n);
+		if(result == null || result.isEmpty()) {
+			return sourceText;
+		}
+		return result;
 	}
 
 	public TranslationEntry getEntryBySingularForm(String id) {
@@ -69,6 +76,10 @@ public class TranslationContext {
 		if(entry.getStrings().isEmpty()) {
 			return sourceText;
 		}
-		return entry.getStrings().get(0);
+		final String result = entry.getStrings().get(0);
+		if(result == null || result.isEmpty()) {
+			return sourceText;
+		}
+		return result;
 	}
 }
