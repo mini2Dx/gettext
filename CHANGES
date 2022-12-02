@@ -1,3 +1,8 @@
+[1.11.0]
+- (#10) Fix parsing of empty comment lines
+- (#9) Return source string for empty translation
+- Separate extractor into separate library + application
+
 [1.10.4]
 - Implement optional binary format for PoFiles
 
