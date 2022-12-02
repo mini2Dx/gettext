@@ -100,6 +100,7 @@ extractedComment
 
 translatorComment
     : HASH unquotedTextLiteral
+    | HASH WHITESPACE*
     ;
 
 numericIndexLiteral

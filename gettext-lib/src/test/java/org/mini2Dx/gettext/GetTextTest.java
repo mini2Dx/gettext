@@ -29,7 +29,7 @@ import java.util.Locale;
 public class GetTextTest {
 	private static final Locale CATALAN = Locale.forLanguageTag("ca-ES");
 
-	private static PoFile EN_FILE, CA_FILE, JP_FILE, EMPTY_FILE;
+	private static PoFile EN_FILE, CA_FILE, JP_FILE, EMPTY_FILE, HEADER_FILE;
 
 	@BeforeClass
 	public static void setUp() throws IOException  {
@@ -37,6 +37,7 @@ public class GetTextTest {
 		CA_FILE = new PoFile(CATALAN, GetTextTest.class.getResourceAsStream("/sample_ca.po"));
 		JP_FILE = new PoFile(Locale.JAPAN, GetTextTest.class.getResourceAsStream("/sample_jp.po"));
 		EMPTY_FILE = new PoFile(Locale.ROOT, GetTextTest.class.getResourceAsStream("/sample_empty.po"));
+		HEADER_FILE = new PoFile(Locale.KOREA, GetTextTest.class.getResourceAsStream("/sample_header.po"));
 
 		GetText.add(EN_FILE);
 		GetText.add(CA_FILE);
@@ -53,6 +54,13 @@ public class GetTextTest {
 	public void testEmptyTranslation() {
 		GetText.setLocale(Locale.ROOT);
 		final String id1 = "Translation is empty";
+		Assert.assertEquals(id1, GetText.tr(id1));
+	}
+
+	@Test
+	public void testHeader() {
+		GetText.setLocale(Locale.KOREA);
+		final String id1 = "Translation in header file";
 		Assert.assertEquals(id1, GetText.tr(id1));
 	}
 
