@@ -51,6 +51,14 @@ public class GetTextTest {
 	}
 
 	@Test
+	public void testGetLocale() {
+		GetText.setLocale(Locale.ROOT);
+		Assert.assertEquals(Locale.ROOT, GetText.getLocale());
+		GetText.setLocale(Locale.KOREA);
+		Assert.assertEquals(Locale.KOREA, GetText.getLocale());
+	}
+
+	@Test
 	public void testEmptyTranslation() {
 		GetText.setLocale(Locale.ROOT);
 		final String id1 = "Translation is empty";
