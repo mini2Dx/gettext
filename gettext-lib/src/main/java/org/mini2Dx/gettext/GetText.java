@@ -239,6 +239,14 @@ public class GetText {
 	}
 
 	/**
+	 * Gets the default {@link Locale}
+	 * @param locale The {@link Locale} to use
+	 */
+	public static Locale getLocale() {
+		return LOCALE;
+	}
+
+	/**
 	 * Sets the default {@link Locale}
 	 * @param locale The {@link Locale} to use
 	 */
